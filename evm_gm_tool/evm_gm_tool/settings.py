@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'tool'
+    'tool.apps.ToolConfig'
 ]
 
 MIDDLEWARE = [
@@ -123,3 +123,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# require BASE_DIR
+# dont't put / before 
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'main/static/results/')
+# ]
+
+# STATIC_ROOT = os.path.join(BASE_DIR, 'evm_gm/static/')
+
+
+LOGIN_REDIRECT_URL = '/'
