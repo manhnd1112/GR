@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User as AdminUser
 # Create your models here.
 
 class Office(models.Model):
@@ -45,3 +45,15 @@ class ProjectMember(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     class Meta:
         db_table = "project_member"
+
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(AdminUser, on_delete=models.CASCADE)
+    description = models.CharField(max_length=100, default='')
+    city = models.CharField(max_length=100, default='')
+    website = models.URLField(default='')
+    phone = models.IntegerField(default=0)
+
+    
+    
