@@ -1,0 +1,9 @@
+{% extends 'layout/layout.html' %}
+
+{% block body %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="subbmit">Register</button>
+    </form>
+{% endblock %}

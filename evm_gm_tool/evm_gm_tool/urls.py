@@ -15,8 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from evm_gm_tool import views as common_views
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('tool.urls'))
+    path('tool/', include('tool.urls')),
+    path('', common_views.login_redirect, name="login_redirect")
 ]
