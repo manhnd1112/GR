@@ -133,4 +133,4 @@ STATIC_URL = '/static/'
 # STATIC_ROOT = os.path.join(BASE_DIR, 'evm_gm/static/')
 
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/tool/'
