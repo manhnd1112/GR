@@ -14,10 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, re_path, include
 from evm_gm_tool import views as common_views
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('tool/', include('tool.urls')),
-    path('', common_views.login_redirect, name="login_redirect")
+    re_path(r'^tool/', include('tool.urls')),
+    re_path(r'', common_views.login_redirect, name="login_redirect")
 ]

@@ -27,12 +27,10 @@ class Dashboard:
             args = {'form': form}
             return render(request, 'evm_gm_tool/auth/reg_form.html', args)
     
-    @login_required
     def view_profile(request):
         args = {'user': request.user}
         return render(request, 'evm_gm_tool/auth/profile.html', args)
 
-    @login_required    
     def edit_profile(request):
         if request.method == 'POST':
             form = EditProfileForm(request.POST, instance=request.user)
@@ -44,7 +42,6 @@ class Dashboard:
             args = {'form': form}
             return render(request, 'evm_gm_tool/auth/edit_profile.html', args)
     
-    @login_required    
     def change_password(request):
         if request.method == 'POST':
             form = PasswordChangeForm(data=request.POST, user=request.user)

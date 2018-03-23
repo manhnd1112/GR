@@ -48,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'tool.middleware.LoginRequireMiddleware'
 ]
 
 ROOT_URLCONF = 'evm_gm_tool.urls'
@@ -132,5 +133,13 @@ STATIC_URL = '/static/'
 
 # STATIC_ROOT = os.path.join(BASE_DIR, 'evm_gm/static/')
 
-
+LOGIN_URL = '/tool/login/'
 LOGIN_REDIRECT_URL = '/tool/'
+
+LOGIN_EXEMPLT_URLS = (
+    r'^tool/login/$',
+    r'^tool/register/$'
+)
+ADMIN_URL = r'^admin'
+
+
