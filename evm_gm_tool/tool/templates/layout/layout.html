@@ -8,13 +8,13 @@
     <body>
         <ul>
             {% if user.is_authenticated %}
-            <li><a href="/tool/logout">Logout</a></li>        
-            <li><a href="/tool/profile">Profile</a></li>        
-            <li><a href="/tool/profile/edit">Edit Profile</a></li>        
+            <li><a href="{% url 'tool:logout' %}">Logout</a></li>        
+            <li><a href="{% url 'tool:view_profile' %}">Profile</a></li>        
+            <li><a href="{% url 'tool:edit_profile' %}">Edit Profile</a></li>        
             
             {% else %}
-                <li><a href="/tool/login">Login</a></li>        
-                <li><a href="/tool/register">Register</a></li>        
+                <li><a href="{% url 'tool:login' %}">Login</a></li>        
+                <li><a href="{% url 'tool:register' %}">Register</a></li>        
             {% endif %}
         </ul>
         <div class="page-header">

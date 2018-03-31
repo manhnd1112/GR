@@ -1,14 +1,16 @@
 from django.urls import path
 from . import views
 from django.contrib.auth.views import login, logout
+from django.conf import settings
+from django.conf.urls.static import static
 
 app_name = 'tool'
 urlpatterns = [
     path("", views.Dashboard.index, name="homepage"),    
     path("login/", login, {'template_name': 'evm_gm_tool/auth/login.html'}, name='login'),
-    path("logout/", logout, {'template_name': 'evm_gm_tool/auth/logout.html'}),
+    path("logout/", logout, {'template_name': 'evm_gm_tool/auth/logout.html'}, name='logout'),
     path("register/", views.Dashboard.register, name='register'), 
     path("profile/", views.Dashboard.view_profile, name='view_profile'),    
     path("profile/edit/", views.Dashboard.edit_profile, name='edit_profile'),  
     path("change-password", views.Dashboard.change_password, name='change_password')    
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

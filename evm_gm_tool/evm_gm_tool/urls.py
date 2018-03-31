@@ -19,5 +19,5 @@ from evm_gm_tool import views as common_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^tool/', include('tool.urls')),
-    re_path(r'', common_views.login_redirect, name="login_redirect")
+    re_path(r'^$', common_views.login_redirect, name="login_redirect")
 ]

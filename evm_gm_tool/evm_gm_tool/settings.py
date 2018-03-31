@@ -142,4 +142,7 @@ LOGIN_EXEMPLT_URLS = (
 )
 ADMIN_URL = r'^admin'
 
+# ten url muon hien thi
+MEDIA_URL = 'media/'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
