@@ -1,0 +1,59 @@
+{% extends 'tool/project/base.html' %}
+
+<h1>Projects</h1>
+{% block content %}
+{% load static %}
+
+<h1>User Managers</h1>
+<a href="{% url 'tool:project_create' %}" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> New Project</a>
+<table class="table table-bordered table-striped" id='crud-table'>
+    <thead>
+      <tr>
+        <th class="text-center" id="id" type="text" prime="true" static="true">ID</th>
+        <th class="text-center" id="name" type="text">Project Name</th>
+        <th class="text-center" id="budget" type="text">Budget</th>
+        <th class="text-center" id="duration" type="text">Project Duration</th>
+        <th class="text-center" id="duration" type="text">Owner</th>
+        <th class="text-center">Action</th>
+      </tr>
+    </thead>
+          
+    <tbody>
+        {% for project in projects %}
+            <tr>
+                <td class="text-center">{{ project.id }}</td>
+                <td class="text-center">{{ project.name }}</td>
+                <td class="text-center">{{ project.budget }}</td>
+                <td class="text-center">{{ project.pd }}</td>
+                <td class="text-center">{{ project.owner.username }}</td>
+                <td class="text-center">
+                    <a href="{% url 'tool:project_view' project.id %}" class="text-red"><i class="fa fa-eye"></i></a>
+                    <a href="{% url 'tool:project_edit' project.id %}" class="text-red"><i class="fa fa-edit"></i></a>
+                    <a href="{% url 'tool:project_delete' project.id %}" class="text-red icon-delete"><i class="fa fa-trash-o"></i></a>
+                </td>
+            </tr>
+        {% endfor %}
+       
+    </tbody>
+    
+</table>
+    
+
+<div class="pagination">
+    <span class="step-links">
+        {% if projects.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ projects.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ projects.number }} of {{ projects.paginator.num_pages }}.
+        </span>
+
+        {% if projects.has_next %}
+            <a href="?page={{ projects.next_page_number }}">next</a>
+            <a href="?page={{ projects.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}

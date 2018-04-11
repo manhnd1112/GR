@@ -1,0 +1,16 @@
+{% extends 'tool/layout/layout.html' %}
+
+{% block body %}
+    {% load static %}
+    <link rel="stylesheet"  type="text/css" href="{% static 'css/project.css' %}">
+    <script src="{% static 'js/project.js' %}"></script>  
+    {% if errors %}
+        {{errors}}
+    {% endif %}
+    {% block content %}
+    {% endblock %}
+    <script type="text/javascript">
+        // using jQuery
+        var csrftoken = $("[name=csrfmiddlewaretoken]").val();
+    </script>
+{% endblock %}

@@ -1,0 +1,328 @@
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.contrib.auth.admin import User
+from tool.models import Project as ProjectModel, ProjectMember, GroupAccess
+from tool.forms import UserCreateForm, UserEditForm, ProjectCreationForm, ProjectEditForm
+from tool.utilies import *
+import xlrd, json
+import numpy as np
+from scipy import optimize 
+from django.core import serializers
+from django.http import JsonResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib import messages
+
+class Funcs: 
+    def count_number_project_status_point(pd, project_status):
+        for i in range(len(project_status)):
+            if project_status[i]['AT'] == pd:
+                return i+1
+        return len(project_status)
+
+    def get_index_of_evaluation(project_status, number_project_status_point, evaluation_point):
+        for i in range(number_project_status_point):
+            if project_status[i]['AT'] >= evaluation_point:
+                return i
+                break
+        return number_project_status_point - 1
+
+    def init(X, Y , pd, budget, project_status, evaluation_index, number_project_status_point):
+        print(len(project_status))
+        for i in range(number_project_status_point):
+            X[i] = project_status[i]['AT']/(pd*1.0)            
+            if i > evaluation_index:
+                project_status[i]['EV'] = project_status[i]['PV']
+                project_status[i]['AC'] = project_status[i]['PV']
+            Y[i] = project_status[i]['AC']/(budget*1.0)
+                    
+    # for gomperzt
+    def gomperzt_func(parameters,xdata):
+        a = parameters[0]
+        b = parameters[1]
+        y = parameters[2]
+        return a * np.exp(-np.exp(b - y*xdata))
+
+    # for logistic
+    def logistic_func(parameters,xdata):
+        a = parameters[0]
+        b = parameters[1]
+        y = parameters[2]
+        return a / (1 + np.exp(b - y*xdata))
+
+    # for logistic
+    def bass_func(parameters,xdata):
+        a = parameters[0]
+        b = parameters[1]
+        y = parameters[2]
+        return a * ( ( 1 - np.exp(-(b + y)*xdata) ) / ( ( 1 + (y / b)*np.exp(-(b + y)*xdata) ) ) )
+
+    # for logistic
+    def weibull_func(parameters,xdata):
+        a = parameters[0]
+        b = parameters[1]
+        y = parameters[2]
+        return a * (1 - np.exp( -( xdata / y )**b ))
+
+    #log-logistic
+    def log_logistic_func(parameters,xdata):
+        a = parameters[0]
+        b = parameters[1]
+        return ( (xdata/a)**b ) / ( 1 + (xdata/a)**b )        
+
+    #Compute residuals of y_predicted - y_observed    
+    def residuals(parameters,x_data,y_observed,func):    
+        return func(parameters,x_data) - y_observed
+
+    def getES(project_status, evaluation_index):
+        # example: evaluationPoint = 9 -> current EV is: EV[8]. i = 0..8
+        EV = project_status[evaluation_index]['EV']
+
+        t = [ n for n,item in enumerate(project_status) if item['PV']>EV ][0] - 1
+        return round(project_status[t]['AT'] + (EV - project_status[t]['PV'])/(project_status[t+1]['PV'] - project_status[t]['PV']), 2)
+    
+    def getSPI(project_status, evaluation_index):
+        return round(project_status[evaluation_index]['EV']/project_status[evaluation_index]['PV'], 2) 
+
+    def getCPI(project_status, evaluation_index):
+        return round(project_status[evaluation_index]['EV']/project_status[evaluation_index]['AC'], 2)
+
+    def getSPIt(project_status, evaluation_index):
+        ES = Funcs.getES(project_status, evaluation_index)
+        return round(ES/project_status[evaluation_index]['AT'], 2)
+    
+    def getSCI(SPI, CPI):
+        return round(SPI*CPI, 2)
+    
+    def getSCIt(SPIt, CPI):
+        return round(SPIt*CPI, 2)
+    
+    def getED(project_status, SPI, evaluation_index):
+        return round(project_status[evaluation_index]['AT']*SPI, 2)
+
+    def getSV(project_status, evaluation_index):
+        return project_status[evaluation_index]['EV'] - project_status[evaluation_index]['PV']
+
+    def getTV(BAC, PD, project_status, evaluation_index):
+        PVrate = BAC/PD
+        SV = Funcs.getSV(project_status, evaluation_index)
+        return round(SV/PVrate, 2)
+
+    def getEACtPV1(PD, TV):
+        return PD - TV
+    
+    def getEACtPV2(PD, SPI):
+        return round(PD/SPI, 2)
+
+    def getEACtPV3(PD, SCI):
+        return round(PD/SCI, 2)   
+
+    # return EACt caculated by ED
+    def getEACtED(PD, project_status, ED, PF, evaluation_index):
+        return round(project_status[evaluation_index]['AT'] + (max(PD, project_status[evaluation_index]['AT']) - ED)/PF, 2)
+
+     # return EACt caculated by ES
+    def getEACtES(PD, project_status, ES, PF, evaluation_index):
+        return round(project_status[evaluation_index]['AT'] + (PD - ES)/PF, 2)
+
+    def getCI(CPI, w_cpi, SPI, w_spi):
+        return CPI*w_cpi + SPI*w_spi
+
+    def getCIt(CPI, w_cpi, SPIt, w_spit):
+        return CPI*w_cpi + SPIt*w_spit
+
+    # EAC caculated by EVM
+    def getEAC(project_status, BAC, evaluation_index, PF):
+        return round(project_status[evaluation_index]['AC'] + (BAC - project_status[evaluation_index]['EV'])/PF, 2)
+    
+    def getEACGM(project_status, xdata, evaluation_index, growModel, parametersEstimated, BAC, index = 1.0):
+        if(growModel == 'gompertz'):
+            restBudget = (Funcs.gomperzt_func(parametersEstimated, index) - Funcs.gomperzt_func(parametersEstimated, xdata[evaluation_index]))*BAC
+        elif(growModel == 'logistic'):
+            restBudget = (Funcs.logistic_func(parametersEstimated, index) - Funcs.logistic_func(parametersEstimated, xdata[evaluation_index]))*BAC
+        elif(growModel == 'bass'):
+            restBudget = (Funcs.bass_func(parametersEstimated, index) - Funcs.bass_func(parametersEstimated, xdata[evaluation_index]))*BAC
+        elif(growModel == 'log_logistic'):
+            restBudget = (Funcs.log_logistic_func(parametersEstimated, index) - Funcs.log_logistic_func(parametersEstimated, xdata[evaluation_index]))*BAC
+        else:
+            restBudget = (Funcs.weibull_func(parametersEstimated, index) - Funcs.weibull_func(parametersEstimated, xdata[evaluation_index]))*BAC            
+        
+        return round(project_status[evaluation_index]['AC'] + restBudget, 2)
+
+    def optimizeLeastSquares(growModel, xdata, ydata, method = 'dogbox'):
+        x0 = [0.1, 0.2, 0.3] 
+        print(growModel)
+        if(growModel == 'gompertz'):
+            OptimizeResult  = optimize.least_squares(Funcs.residuals,  x0,method = method,
+                                          args   = ( xdata, ydata,Funcs.gomperzt_func) )
+        elif(growModel == 'logistic'):
+            OptimizeResult  = optimize.least_squares(Funcs.residuals,  x0,method = method,
+                                          args   = ( xdata, ydata,Funcs.logistic_func) )
+        elif(growModel == 'bass'):
+            OptimizeResult  = optimize.least_squares(Funcs.residuals,  x0,method = method,
+                                          args   = ( xdata, ydata,Funcs.bass_func) )
+        elif(growModel == 'log_logistic'):
+            x0 = [0.1, 0.2]
+            OptimizeResult  = optimize.least_squares(Funcs.residuals,  x0,method = method,
+                                          args   = ( xdata, ydata,Funcs.log_logistic_func) )
+        else:
+            OptimizeResult  = optimize.least_squares(Funcs.residuals,  x0,method = method,
+                                          args   = ( xdata, ydata,Funcs.weibull_func) )
+
+        parametersEstimated = OptimizeResult.x
+        return parametersEstimated
+
+class MyIO:
+    
+    def writeResultToFile(project_name, grow_model, evaluation_time, data):
+        static_dir = settings.STATICFILES_DIRS[0]
+
+        #Creating a folder in static directory
+        new_pro_dir_path = os.path.join(static_dir,'%s'%(project_name))
+        new_pro_gro_dir_path = os.path.join(static_dir,'%s/%s'%(project_name, grow_model))
+        new_pro_gro_eva_dir_path = os.path.join(static_dir, '%s/%s/%s'%(project_name, grow_model, evaluation_time))
+        result_file_path = os.path.join(static_dir, '%s/%s/%s/data.json'%(project_name, grow_model, evaluation_time))
+
+        if not os.path.exists(new_pro_dir_path):
+            os.makedirs(new_pro_dir_path)
+
+        if not os.path.exists(new_pro_gro_dir_path):
+            os.makedirs(new_pro_gro_dir_path)
+        
+        if not os.path.exists(new_pro_gro_eva_dir_path):
+            os.makedirs(new_pro_gro_eva_dir_path)
+        
+        with open(result_file_path, 'w') as f:
+            json.dump(data, f)
+
+class EstimateController:   
+    def index(request):
+        projects = ProjectModel.get_projects_has_access(request.user.id)
+        return render(request, 'tool/estimate/index.html', {'projects': projects})
+
+    def estimate(request):
+        pd = int(request.GET.get('pd'))
+        budget = float(request.GET.get('budget'))
+        project_status = json.loads(str(request.GET.get('project_status')))
+        #data = request.GET.get('project_status')
+        grow_model = request.GET.get('grow_model')
+        evaluation_point = int(request.GET.get('evaluation_point'))
+        #evaluation_percent = int(request.GET.get('evaluation_percent'))
+        #AC = float(request.GET.get('AC'))
+        # print(pd, budget)
+        # print(project_status)
+        # print(grow_model)
+        # print(evaluation_point)
+        number_project_status_point = Funcs.count_number_project_status_point(pd, project_status)
+        print(number_project_status_point)
+        xdata = np.zeros(number_project_status_point)
+        ydata = np.zeros(number_project_status_point)
+
+        evaluation_index = Funcs.get_index_of_evaluation(project_status, number_project_status_point, evaluation_point)        
+        Funcs.init(xdata, ydata, pd, budget, project_status, evaluation_index, number_project_status_point)                
+        ES = Funcs.getES(project_status, evaluation_index)
+        SPI = Funcs.getSPI(project_status, evaluation_index)
+        CPI = Funcs.getCPI(project_status, evaluation_index)
+        SPIt = Funcs.getSPIt(project_status, evaluation_index)
+        SCI = Funcs.getSCI(SPI, CPI)
+        SCIt = Funcs.getSCIt(SPIt, CPI)
+        TV = Funcs.getTV(budget, pd, project_status, evaluation_index)
+        ED = Funcs.getED(project_status, SPI, evaluation_index)
+        EACtPV1 = Funcs.getEACtPV1(pd, Funcs.getTV(budget, pd, project_status, evaluation_index))
+        EACtPV2 = Funcs.getEACtPV2(pd, SPI)
+        EACtPV3 = Funcs.getEACtPV3(pd, SCI)        
+
+        EACtED1 = Funcs.getEACtED(pd, project_status, ED, 1, evaluation_index)
+        EACtED2 = Funcs.getEACtED(pd, project_status, ED, SPI, evaluation_index)
+        EACtED3 = Funcs.getEACtED(pd, project_status, ED, SCI, evaluation_index)
+        
+        EACtES1 = Funcs.getEACtES(pd, project_status, ES, 1, evaluation_index)
+        EACtES2 = Funcs.getEACtES(pd, project_status, ES, SPIt, evaluation_index)
+        EACtES3 = Funcs.getEACtES(pd, project_status, ES, SCIt, evaluation_index)
+        
+        EAC1 = Funcs.getEAC(project_status, budget, evaluation_index, 1)
+        EAC2 = Funcs.getEAC(project_status, budget, evaluation_index, CPI)
+        EAC3 = Funcs.getEAC(project_status, budget, evaluation_index, SPI)
+        EAC3_SPI = Funcs.getEAC(project_status, budget, evaluation_index, SPI)
+        EAC3_SPIt = Funcs.getEAC(project_status, budget, evaluation_index, SPIt)
+        EAC4_SCI = Funcs.getEAC(project_status, budget, evaluation_index, SCI)
+        EAC4_SCIt = Funcs.getEAC(project_status, budget, evaluation_index, SCIt)
+        
+        CI = Funcs.getCI(CPI, 0.8, SPI, 0.2)
+        CIt = Funcs.getCIt(CPI, 0.8, SPIt, 0.2)
+        EAC5_CI = Funcs.getEAC(project_status, budget, evaluation_index, CI)
+        EAC5_CIt = Funcs.getEAC(project_status, budget, evaluation_index, CIt)
+    #     # print(xdata)
+    #     # print(ydata)
+    #     lb = [0,0,0]
+    #     ub = [2,2,2]
+
+        parametersEstimated = Funcs.optimizeLeastSquares(grow_model, xdata, ydata)
+        print(parametersEstimated)
+        EAC_GM1 = Funcs.getEACGM(project_status, xdata, evaluation_index, grow_model, parametersEstimated, budget, 1.0)
+        print(EAC_GM1)
+        EAC_GM2 = Funcs.getEACGM(project_status, xdata, evaluation_index, grow_model, parametersEstimated, budget, 1.0/SPIt)
+        print(EAC_GM2)
+        alpha = parametersEstimated[0]
+        beta = parametersEstimated[1]
+        if(grow_model == 'log_logistic'):
+            gamma = ''
+        else:
+            gamma = parametersEstimated[2]
+        
+
+        data = {
+            'alpha': alpha,
+            'beta': beta,
+            'gamma': gamma,
+            'ES': ES,
+            'SPI': SPI,
+            'CPI': CPI, 
+            'SPIt': SPIt,
+            'SCI': SCI,
+            'SCIt': SCIt, 
+            'TV': TV, 
+            'ED': ED,
+            'EACtPV1': EACtPV1,
+            'EACtPV2': EACtPV2,
+            'EACtPV3': EACtPV3,
+            'EACtED1': EACtED1,
+            'EACtED2': EACtED2,
+            'EACtED3': EACtED3,
+            'EACtES1': EACtES1,
+            'EACtES2': EACtES2,
+            'EACtES3': EACtES3,
+            'EAC1': EAC1,
+            'EAC2': EAC2,
+            'EAC3_SPI': EAC3_SPI,
+            'EAC3_SPIt': EAC3_SPIt,
+            'EAC4_SCI': EAC4_SCI,
+            'EAC4_SCIt': EAC4_SCIt,
+            'EAC5_CI': EAC5_CI,
+            'EAC5_CIt': EAC5_CIt,
+            'EAC_GM1': EAC_GM1,
+            'EAC_GM2': EAC_GM2
+        }
+
+    #     results_data = {
+    #         'AC': AC,
+    #         'EAC1': EAC1,
+    #         'EAC2': EAC2,
+    #         'EAC3_SPI': EAC3_SPI,
+    #         'EAC3_SPIt': EAC3_SPIt,
+    #         'EAC4_SCI': EAC4_SCI,
+    #         'EAC4_SCIt': EAC4_SCIt,
+    #         'EAC5_CI': EAC5_CI,
+    #         'EAC5_CIt': EAC5_CIt,
+    #         'EAC_GM1': EAC_GM1,
+    #         'EAC_GM2': EAC_GM2
+    #     }
+    #     MyIO.writeResultToFile(project_name, grow_model, evaluation_percent, results_data)
+        return JsonResponse({'status': 200, 'data': data})
+    
+    # def mape(request): 
+    #     results_dir = settings.STATICFILES_DIRS[0]
+    #     list_projects = os.listdir(results_dir)
+    #     for pro_name in list_projects:
+    #         pro_dir =  os.path.join(results_dir,'%s'%(pro_name))
+    #         print(os.listdir(pro_dir))
+        # return JsonResponse({'data': 'abc'})

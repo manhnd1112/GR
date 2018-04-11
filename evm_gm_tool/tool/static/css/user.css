@@ -1,0 +1,13 @@
+.user_creation_form label {
+    min-width: 150px;
+}
+.user_creation_form button {
+    margin-left: 150px;
+    padding: 6px 30px;
+}
+
+.user_creation_form .form-control{
+    width: 50%;
+    display: inline-block;
+}
+

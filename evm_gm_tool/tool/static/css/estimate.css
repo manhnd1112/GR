@@ -1,0 +1,8 @@
+.estimate .table>thead:first-child>tr:first-child>td, .table>thead:first-child>tr:first-child>th {
+    background-color: #BABABA;
+    color: black;
+    border-color: white;
+}
+
+.estimate .table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td {
+    border: 1px solid #d2d2d2;

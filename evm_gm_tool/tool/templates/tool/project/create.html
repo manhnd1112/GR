@@ -1,0 +1,100 @@
+{% extends 'tool/project/base.html' %}
+{% block title %}Add project{% endblock %}
+
+{% block content %}
+    <form action="" method="POST" class="form project-creation-form">
+        {% csrf_token %}
+        {% for field in form %}
+            {% if field.name != 'status' and field.name != 'id' %}
+                {{ field.label_tag }} {{ field }}
+                <br><br>
+            {% else %}
+                <div class="display-none">
+                    {{ field.label_tag }} {{ field }}            
+                </div>
+            {% endif %}
+        {% endfor %}
+        <input type="text" name="members" style="display: none" />
+
+        <input type="file" class="file-input-data" accept=".xls, .xlsx, .csv, text/csv">
+        <div class="project-status-actions" id="project-status-actions">
+                <a class="btn btn-default btn-add-project-status">Add project status</a>                
+                <a class="btn btn-default btn-import-project-status-from-csv">Import project status from file csv</a>
+        </div>
+        <br>
+        <div class="project-status">
+            <div class="label-header">
+                <label for="">AT</label>
+                <label for="">PV</label>
+                <label for="">EV</label>
+                <label for="">AC</label>
+            </div>
+        </div> 
+        <div style="display: none" class="project-status-field" index="-1">
+            <input type="text" class="AT form-control">
+            <input type="text" class="PV form-control">
+            <input type="text" class="EV form-control">
+            <input type="text" class="AC form-control">
+            <a class="text-red icon-delete btn-remove"><i class="fa fa-times" aria-hidden="true"></i></a>
+            
+            <!-- <a class="btn btn-default btn-remove">Remove</a> -->
+        </div>
+        <!-- Map box -->
+        <div class="box box-solid add-project-member-box">
+                <div class="box-header">
+                  <!-- tools box -->
+                  <div class="pull-right box-tools">
+                    <button type="button" class="btn btn-primary btn-sm pull-right" data-widget="collapse"
+                            data-toggle="tooltip" title="Collapse" style="margin-right: 5px;">
+                      <i class="fa fa-minus"></i></button>
+                  </div>
+                  <!-- /. tools -->
+    
+                  <i class="fa fa-users" aria-hidden="true"></i>
+    
+                  <h3 class="box-title">
+                    Project Members
+                  </h3>
+                </div>
+                <div class="box-body">
+                  <div id="world-map" style="height: 250px; width: 100%;">
+                    
+                    <div class="add-project-member-area">
+                        <input type="text" class="search-member form-control" selected-user-id="">
+                        <select name="" id="" class="select-box-group-access form-control">
+                            <option value="0">Read</option>
+                            <option value="1">Write</option>                    
+                            <option value="2">Admin</option>
+                        </select>
+                        <a class="btn btn-default btn-add-project-member btn-primary">Add</a>
+                        <ul class="search-result">
+                        </ul>
+                    </div>
+                    <div class="project-members">
+                        
+                    </div>
+            
+                    <li style="display:none" class="search-result-member-item-field" user-id="">
+                    </li>
+                
+                    <div style="display:none" class="member-item-field" user-id="" index="-1">
+                        <div class="username-box">
+                            <span class="username"></span>                       
+                        </div>
+                        <div class="access-box">
+                            <span class="user-id display-none"></span>   
+                            <span class="group-access" group-access="0">Read</span>   
+                            <span class="group-access" group-access="1">Write</span>   
+                            <span class="group-access" group-access="2">Admin</span>  
+                        </div>
+                        <a class="btn-remove-member">Remove</a>
+                    </div>
+
+                  </div>
+                </div>
+                <!-- /.box-body-->
+              </div>
+
+        <button type="submit" class="btn btn-success">Create</button>
+    </form>
+{% endblock %}

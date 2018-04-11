@@ -1,0 +1,17 @@
+.alert {
+    width: 80%;
+    color: #000000!important;
+    background-image: none;
+}
+
+.display-none {
+    display: none!important;
+}
+
+a.btn {
+    min-width: 150px;
+}
+
+button {
+    min-width: 150px;
+}

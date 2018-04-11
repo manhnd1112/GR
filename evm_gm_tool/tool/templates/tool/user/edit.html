@@ -1,0 +1,25 @@
+{% extends 'tool/layout/layout.html' %}
+
+{% block body %}
+{% load static %}
+<link rel="stylesheet"  type="text/css" href="{% static 'css/user.css' %}">
+
+<div class="container">
+    <h1>Edit Profile</h1>
+    {% include 'tool/common/errors.html' with form=form%}
+    <form action="" method="POST" class="user-edit-form">
+        {% csrf_token %}
+        {% for field in form %}
+            {% if field.name != 'password' %}
+                {{ field.label_tag }} {{ field }}
+                <br><br>
+            {% else %}
+                <div class="display-none">
+                    {{ field.label_tag }} {{ field }}            
+                </div>
+            {% endif %}
+        {% endfor %}
+        <button type="submit" class="btn btn-update btn-success">Update</button>
+    </form>
+</div>
+{% endblock %}
