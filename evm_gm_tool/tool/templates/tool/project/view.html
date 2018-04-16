@@ -1,0 +1,100 @@
+{% extends 'tool/project/base.html' %}
+{% block title %}Project Detail{% endblock %}
+
+{% block content %}
+    {% block header_title %}
+    <h1>Project Detail</h1>
+    {% endblock %}
+    {% load static %}
+    {% load project %}
+    <script src="{% static 'js/project_view.js' %}"></script>
+    
+    <div class="project-view">
+        {% if request.user|has_write_permission:project %}
+        <div>
+            <a href="{% url 'tool:project_edit' project.id %}" class="btn btn-primary">Edit</a>
+            {% if request.user|has_all_permission:project %}
+            <a href="{% url 'tool:project_delete' project.id %}" class="btn btn-danger btn-delete-project">Delete</a>
+            {% endif %}
+        </div><br>
+        {% endif %}
+        <table class="table table-bordered table-project-detail custom-table-border">
+            <tbody>
+                <tr>
+                    <td class="field-name">Name</td>
+                    <td>{{project.name}}</td>
+                </tr>
+                <tr>
+                    <td class="field-name">Description</td>
+                    <td>{{project.desc}}</td>
+                </tr>
+                <tr>
+                    <td class="field-name">Budget</td>
+                    <td>{{project.budget}}</td>
+                </tr>
+                <tr>
+                    <td class="field-name">Project Duration</td>
+                    <td>{{project.pd}}</td>
+                </tr>
+                <tr>
+                    <td class="field-name">Owner</td>
+                    <td>{{project.owner.username}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <input type="hidden" value="{{project.status}}" id="project-status">
+        <table class="table table-bordered table-project-status">
+            <thead>
+                <td>AT</td>
+                <td>PV</td>
+                <td>EV</td>
+                <td>AC</td>                
+            </thead>
+            <tbody>
+                <tr style="display: none" class="status-tr-template">
+                    <td class="AT"></td>
+                    <td class="PV"></td>
+                    <td class="EV"></td>
+                    <td class="AC"></td>                    
+                </tr>
+            </tbody>
+        </table>
+        <div class="box box-solid add-project-member-box">
+            <div class="box-header">
+                <!-- tools box -->
+                <div class="pull-right box-tools">
+                <button type="button" class="btn btn-primary btn-sm pull-right" data-widget="collapse"
+                        data-toggle="tooltip" title="Collapse" style="margin-right: 5px;">
+                    <i class="fa fa-minus"></i></button>
+                </div>
+                <!-- /. tools -->
+    
+                <i class="fa fa-users" aria-hidden="true"></i>
+    
+                <h3 class="box-title">
+                Project Members
+                </h3>
+            </div>
+            
+            <div class="box-body">
+                <div id="world-map" style="width: 100%;">
+                {% for member in member_list %}
+                    <div class="member-item-field">
+                        <div class="username-box">
+                            <span class="id display-none"></span>                               
+                            <span class="user-id display-none"></span>                                                               
+                            <span class="username">{{member.username}}</span>                       
+                        </div>
+                        <div class="access-box">
+                            <span>{{ member.group_access|get_group_access_as_text }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+            <!-- /.box-body-->
+        </div>
+    </div>      
+    
+    
+{% endblock %}

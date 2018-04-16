@@ -21,7 +21,9 @@ $(document).ready(function(){
         // these HTTP methods do not require CSRF protection
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
-    console.log(csrftoken);
+    $('.icon-delete').click(function(){
+        return confirm("Are you sure you want to delete this project?")
+    })
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
             console.log(csrftoken);
@@ -426,9 +428,9 @@ $(document).ready(function(){
                 member_item_field_clone.css('display', 'block');
                 member_item_field_clone.attr('index', index);
                 member_item_field_clone.find('.id').text(project_member["id"]);                
-                member_item_field_clone.find('.user-id').text(project_member["user-id"]);
+                member_item_field_clone.find('.user-id').text(project_member["user_id"]);
                 member_item_field_clone.find('.username').text(project_member["username"]);
-                member_item_field_clone.find('.group-access').eq(project_member['group-access']).addClass('active')
+                member_item_field_clone.find('.group-access').eq(project_member['group_access']).addClass('active')
                 add_member_field_listen(member_item_field_clone);        
                 $('.project-members').append($(member_item_field_clone));
             })

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.admin import User
 from tool.models import Project as ProjectModel, ProjectMember, GroupAccess
-from tool.forms import UserCreateForm, UserEditForm, ProjectCreationForm, ProjectEditForm
+from tool.forms import UserCreateForm, UserEditForm, ProjectCreationForm, ProjectEditForm, ProjectViewForm
 from tool.utilies import *
 import xlrd, json
 from django.core import serializers
@@ -12,14 +12,15 @@ from django.contrib import messages
 
 class ProjectController:
     def index(request):
-        project_list = ProjectModel.objects.all()
+        project_list = ProjectModel.get_projects_has_access(request.user.id)
         paginator = Paginator(project_list, 3) # Show 25 contacts per page
-
         page = request.GET.get('page')
         projects = paginator.get_page(page)
         return render(request, 'tool/project/index.html', {'projects': projects})
 
     def create(request):
+        if not request.user.is_superuser:
+            return redirect('tool:error_no_access')
         if request.method == "POST":
             form = ProjectCreationForm(request.POST)
             args = {'form': form}                     
@@ -43,18 +44,19 @@ class ProjectController:
         project = get_or_none(ProjectModel, pk=id)
         if project is None:
             return redirect('tool:page_not_found')
-        args = {'project': project}
+        members = ProjectMember.get_member_list(project)
+        args = {'project': project, 'member_list': members}
         return render(request, 'tool/project/view.html', args)
 
     def edit(request, id):
         project = ProjectModel.objects.get(id=id)
         # check has permission edit project
-        is_owner_or_admin_or_supperuser = False or request.user.is_superuser
+        has_edit_permission = False 
         group_access = ProjectMember.get_group_access(request.user.id, project.id)
-        if(group_access == GroupAccess.OWNER or group_access == GroupAccess.ADMIN):
-            is_owner_or_admin_or_supperuser = True
+        if(group_access != GroupAccess.READ):
+            has_edit_permission = True
 
-        if not is_owner_or_admin_or_supperuser:
+        if not has_edit_permission:
             return redirect('tool:error_no_access')
 
         if request.method == "POST":
@@ -76,36 +78,18 @@ class ProjectController:
             project = ProjectModel.objects.get(id=id)
             form = ProjectEditForm(instance=project)
             members = ProjectMember.get_member_list(project)
-            args = {'form': form, 'members': json.dumps(members)}
+            args = {'form': form, 'members': json.dumps(members), 'member_list': members, 'project': project}
             return render(request, 'tool/project/edit.html', args)
 
     def delete(request, id):
-        is_admin = request.user.is_superuser
-        if not is_admin:
+        group_access = ProjectMember.get_group_access(request.user.id, id)        
+        if group_access != GroupAccess.SUPERUSER and group_access != GroupAccess.OWNER:
             return redirect('tool:error_no_access')
         project_remove = get_or_none(ProjectModel, pk=id)
         if project_remove is None:
             return redirect('tool:page_not_found')
-        print(project_remove)
         project_remove.delete()
         messages.success(request, 'Project deleted successfully.')
         return redirect('tool:project_index')
 
-    # def ajax_upload_csv(request):
-    #     if request.method == 'POST':
-    #         file_input = request.FILES['file']
-    #         data = ProjectController.handle_uploaded_file(file_input)
-    #         return JsonResponse({'data': data})
-
-    # def handle_uploaded_file(f):
-    #     workbook = xlrd.open_workbook(file_contents=f.read())
-    #     sheet = workbook.sheet_by_index(0)
-    #     nrows = sheet.nrows - 1
-    #     ncols = sheet.ncols
-    #     data = []
-    #     for col in range(sheet.ncols):
-    #         data.append(sheet.col_values(col))
-    #     for i in range(len(data)):
-    #         data[i].remove(data[i][0])
-    #     return data
             

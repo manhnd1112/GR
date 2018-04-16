@@ -1,0 +1,19 @@
+{% load static %}
+<link rel="stylesheet"  type="text/css" href="{% static 'css/estimate.css' %}">
+<script src="{% static 'js/mape.js' %}"></script>  
+<div>
+    <label for="">Choose Project</label>
+    <select class="mape-project-select-box">
+        <option value="all">All project</option>
+        {% for project in projects %}
+            <option value="{{ project.id }}" 
+                selected="{% if forloop.counter0 == 0 %} selected {% endif %}">
+                {{ project.name }}
+            </option>        
+        {% endfor %}
+    </select>
+    <canvas id="myChart" width="200" height="200"></canvas>
+    <canvas id="chartLogistic" width="200" height="200"></canvas>
+    <canvas id="chartWeibull" width="200" height="200"></canvas>
+    <canvas id="chartBass" width="200" height="200"></canvas>
+</div>

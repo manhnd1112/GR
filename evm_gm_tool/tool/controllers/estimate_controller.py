@@ -11,6 +11,7 @@ from django.core import serializers
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
+import math
 
 class Funcs: 
     def count_number_project_status_point(pd, project_status):
@@ -22,12 +23,11 @@ class Funcs:
     def get_index_of_evaluation(project_status, number_project_status_point, evaluation_point):
         for i in range(number_project_status_point):
             if project_status[i]['AT'] >= evaluation_point:
-                return i
+                return i - 1
                 break
         return number_project_status_point - 1
 
     def init(X, Y , pd, budget, project_status, evaluation_index, number_project_status_point):
-        print(len(project_status))
         for i in range(number_project_status_point):
             X[i] = project_status[i]['AT']/(pd*1.0)            
             if i > evaluation_index:
@@ -141,16 +141,16 @@ class Funcs:
             restBudget = (Funcs.logistic_func(parametersEstimated, index) - Funcs.logistic_func(parametersEstimated, xdata[evaluation_index]))*BAC
         elif(growModel == 'bass'):
             restBudget = (Funcs.bass_func(parametersEstimated, index) - Funcs.bass_func(parametersEstimated, xdata[evaluation_index]))*BAC
-        elif(growModel == 'log_logistic'):
-            restBudget = (Funcs.log_logistic_func(parametersEstimated, index) - Funcs.log_logistic_func(parametersEstimated, xdata[evaluation_index]))*BAC
+        elif(growModel == 'weibull'):
+            restBudget = (Funcs.weibull_func(parametersEstimated, index) - Funcs.weibull_func(parametersEstimated, xdata[evaluation_index]))*BAC                        
         else:
-            restBudget = (Funcs.weibull_func(parametersEstimated, index) - Funcs.weibull_func(parametersEstimated, xdata[evaluation_index]))*BAC            
+            restBudget = (Funcs.log_logistic_func(parametersEstimated, index) - Funcs.log_logistic_func(parametersEstimated, xdata[evaluation_index]))*BAC
+            
         
         return round(project_status[evaluation_index]['AC'] + restBudget, 2)
 
     def optimizeLeastSquares(growModel, xdata, ydata, method = 'dogbox'):
         x0 = [0.1, 0.2, 0.3] 
-        print(growModel)
         if(growModel == 'gompertz'):
             OptimizeResult  = optimize.least_squares(Funcs.residuals,  x0,method = method,
                                           args   = ( xdata, ydata,Funcs.gomperzt_func) )
@@ -171,54 +171,20 @@ class Funcs:
         parametersEstimated = OptimizeResult.x
         return parametersEstimated
 
-class MyIO:
-    
-    def writeResultToFile(project_name, grow_model, evaluation_time, data):
-        static_dir = settings.STATICFILES_DIRS[0]
-
-        #Creating a folder in static directory
-        new_pro_dir_path = os.path.join(static_dir,'%s'%(project_name))
-        new_pro_gro_dir_path = os.path.join(static_dir,'%s/%s'%(project_name, grow_model))
-        new_pro_gro_eva_dir_path = os.path.join(static_dir, '%s/%s/%s'%(project_name, grow_model, evaluation_time))
-        result_file_path = os.path.join(static_dir, '%s/%s/%s/data.json'%(project_name, grow_model, evaluation_time))
-
-        if not os.path.exists(new_pro_dir_path):
-            os.makedirs(new_pro_dir_path)
-
-        if not os.path.exists(new_pro_gro_dir_path):
-            os.makedirs(new_pro_gro_dir_path)
-        
-        if not os.path.exists(new_pro_gro_eva_dir_path):
-            os.makedirs(new_pro_gro_eva_dir_path)
-        
-        with open(result_file_path, 'w') as f:
-            json.dump(data, f)
-
-class EstimateController:   
-    def index(request):
-        projects = ProjectModel.get_projects_has_access(request.user.id)
-        return render(request, 'tool/estimate/index.html', {'projects': projects})
-
-    def estimate(request):
-        pd = int(request.GET.get('pd'))
-        budget = float(request.GET.get('budget'))
-        project_status = json.loads(str(request.GET.get('project_status')))
-        #data = request.GET.get('project_status')
-        grow_model = request.GET.get('grow_model')
-        evaluation_point = int(request.GET.get('evaluation_point'))
-        #evaluation_percent = int(request.GET.get('evaluation_percent'))
-        #AC = float(request.GET.get('AC'))
-        # print(pd, budget)
-        # print(project_status)
-        # print(grow_model)
-        # print(evaluation_point)
+    def estimate(project_id, grow_model, evaluation_point):
+        project = get_or_none(ProjectModel, pk=project_id)
+        if project is None:
+            return {}
+        pd = project.pd
+        budget = project.budget
+        project_status = json.loads(project.status)        
         number_project_status_point = Funcs.count_number_project_status_point(pd, project_status)
-        print(number_project_status_point)
+        
         xdata = np.zeros(number_project_status_point)
         ydata = np.zeros(number_project_status_point)
-
         evaluation_index = Funcs.get_index_of_evaluation(project_status, number_project_status_point, evaluation_point)        
-        Funcs.init(xdata, ydata, pd, budget, project_status, evaluation_index, number_project_status_point)                
+        Funcs.init(xdata, ydata, pd, budget, project_status, evaluation_index, number_project_status_point)                 
+
         ES = Funcs.getES(project_status, evaluation_index)
         SPI = Funcs.getSPI(project_status, evaluation_index)
         CPI = Funcs.getCPI(project_status, evaluation_index)
@@ -251,24 +217,15 @@ class EstimateController:
         CIt = Funcs.getCIt(CPI, 0.8, SPIt, 0.2)
         EAC5_CI = Funcs.getEAC(project_status, budget, evaluation_index, CI)
         EAC5_CIt = Funcs.getEAC(project_status, budget, evaluation_index, CIt)
-    #     # print(xdata)
-    #     # print(ydata)
-    #     lb = [0,0,0]
-    #     ub = [2,2,2]
-
         parametersEstimated = Funcs.optimizeLeastSquares(grow_model, xdata, ydata)
-        print(parametersEstimated)
         EAC_GM1 = Funcs.getEACGM(project_status, xdata, evaluation_index, grow_model, parametersEstimated, budget, 1.0)
-        print(EAC_GM1)
         EAC_GM2 = Funcs.getEACGM(project_status, xdata, evaluation_index, grow_model, parametersEstimated, budget, 1.0/SPIt)
-        print(EAC_GM2)
         alpha = parametersEstimated[0]
         beta = parametersEstimated[1]
         if(grow_model == 'log_logistic'):
             gamma = ''
         else:
             gamma = parametersEstimated[2]
-        
 
         data = {
             'alpha': alpha,
@@ -302,27 +259,119 @@ class EstimateController:
             'EAC_GM1': EAC_GM1,
             'EAC_GM2': EAC_GM2
         }
-
-    #     results_data = {
-    #         'AC': AC,
-    #         'EAC1': EAC1,
-    #         'EAC2': EAC2,
-    #         'EAC3_SPI': EAC3_SPI,
-    #         'EAC3_SPIt': EAC3_SPIt,
-    #         'EAC4_SCI': EAC4_SCI,
-    #         'EAC4_SCIt': EAC4_SCIt,
-    #         'EAC5_CI': EAC5_CI,
-    #         'EAC5_CIt': EAC5_CIt,
-    #         'EAC_GM1': EAC_GM1,
-    #         'EAC_GM2': EAC_GM2
-    #     }
-    #     MyIO.writeResultToFile(project_name, grow_model, evaluation_percent, results_data)
-        return JsonResponse({'status': 200, 'data': data})
+        return data
     
-    # def mape(request): 
-    #     results_dir = settings.STATICFILES_DIRS[0]
-    #     list_projects = os.listdir(results_dir)
-    #     for pro_name in list_projects:
-    #         pro_dir =  os.path.join(results_dir,'%s'%(pro_name))
-    #         print(os.listdir(pro_dir))
-        # return JsonResponse({'data': 'abc'})
+    def get_pe(project_id, grow_model, evaluation_point):
+        project = get_or_none(ProjectModel, pk=project_id)
+        if project is None:
+            return {}
+        project_ac = project.get_ac()
+        estimate_data = Funcs.estimate(project_id, grow_model, evaluation_point)
+        data = {}
+        data['pe_EAC1'] = round((estimate_data['EAC1'] - project_ac)*100/project_ac, 2)
+        data['pe_EAC2'] = round((estimate_data['EAC2'] - project_ac)*100/project_ac, 2)
+        data['pe_EAC3_SPI'] = round((estimate_data['EAC3_SPI'] - project_ac)*100/project_ac, 2)
+        data['pe_EAC3_SPIt'] = round((estimate_data['EAC3_SPIt'] - project_ac)*100/project_ac, 2)
+        data['pe_EAC4_SCI'] = round((estimate_data['EAC4_SCI'] - project_ac)*100/project_ac, 2)
+        data['pe_EAC4_SCIt'] = round((estimate_data['EAC4_SCIt'] - project_ac)*100/project_ac, 2)
+        data['pe_EAC5_CI'] = round((estimate_data['EAC5_CI'] - project_ac)*100/project_ac, 2)
+        data['pe_EAC5_CIt'] = round((estimate_data['EAC5_CIt'] - project_ac)*100/project_ac, 2)
+        data['pe_EAC_GM1'] = round((estimate_data['EAC_GM1'] - project_ac)*100/project_ac, 2)
+        data['pe_EAC_GM2'] = round((estimate_data['EAC_GM2'] - project_ac)*100/project_ac, 2)
+        return data
+    
+    def get_mape(project_ids, grow_model, evaluation_percent):
+        projects = ProjectModel.objects.filter(pk__in=project_ids)
+        data_mape = {}
+        data_pe = {}
+        for project in projects:
+            evaluation_point = math.ceil(project.pd*evaluation_percent)
+            data_pe['{}'.format(project.id)] = Funcs.get_pe(project.id, grow_model, evaluation_point)
+        sum_pe = [0,0,0,0,0,0,0,0,0,0]
+        for project_id in project_ids:
+            sum_pe[0] += abs(data_pe['{}'.format(project_id)]['pe_EAC1'])
+            sum_pe[1] += abs(data_pe['{}'.format(project_id)]['pe_EAC2'])
+            sum_pe[2] += abs(data_pe['{}'.format(project_id)]['pe_EAC3_SPI'])
+            sum_pe[3] += abs(data_pe['{}'.format(project_id)]['pe_EAC3_SPIt'])
+            sum_pe[4] += abs(data_pe['{}'.format(project_id)]['pe_EAC4_SCI'])
+            sum_pe[5] += abs(data_pe['{}'.format(project_id)]['pe_EAC4_SCIt'])
+            sum_pe[6] += abs(data_pe['{}'.format(project_id)]['pe_EAC5_CI'])
+            sum_pe[7] += abs(data_pe['{}'.format(project_id)]['pe_EAC5_CIt'])
+            sum_pe[8] += abs(data_pe['{}'.format(project_id)]['pe_EAC_GM1'])
+            sum_pe[9] += abs(data_pe['{}'.format(project_id)]['pe_EAC_GM2'])
+        return {
+            'mape_EAC1': sum_pe[0]/len(project_ids),
+            'mape_EAC2': sum_pe[1]/len(project_ids),
+            'mape_EAC3_SPI': sum_pe[2]/len(project_ids),
+            'mape_EAC3_SPIt': sum_pe[3]/len(project_ids),
+            'mape_EAC4_SCI': sum_pe[4]/len(project_ids),
+            'mape_EAC4_SCIt': sum_pe[5]/len(project_ids),
+            'mape_EAC5_CI': sum_pe[6]/len(project_ids),
+            'mape_EAC5_CIt': sum_pe[7]/len(project_ids),
+            'mape_EAC_GM1': sum_pe[8]/len(project_ids),
+            'mape_EAC_GM2': sum_pe[9]/len(project_ids)
+        }
+
+class MyIO:
+    
+    def writeResultToFile(project_name, grow_model, evaluation_time, data):
+        static_dir = settings.STATICFILES_DIRS[0]
+
+        #Creating a folder in static directory
+        new_pro_dir_path = os.path.join(static_dir,'%s'%(project_name))
+        new_pro_gro_dir_path = os.path.join(static_dir,'%s/%s'%(project_name, grow_model))
+        new_pro_gro_eva_dir_path = os.path.join(static_dir, '%s/%s/%s'%(project_name, grow_model, evaluation_time))
+        result_file_path = os.path.join(static_dir, '%s/%s/%s/data.json'%(project_name, grow_model, evaluation_time))
+
+        if not os.path.exists(new_pro_dir_path):
+            os.makedirs(new_pro_dir_path)
+
+        if not os.path.exists(new_pro_gro_dir_path):
+            os.makedirs(new_pro_gro_dir_path)
+        
+        if not os.path.exists(new_pro_gro_eva_dir_path):
+            os.makedirs(new_pro_gro_eva_dir_path)
+        
+        with open(result_file_path, 'w') as f:
+            json.dump(data, f)
+
+class EstimateController:   
+    def index(request):
+        projects = ProjectModel.get_projects_has_access(request.user.id)
+        return render(request, 'tool/estimate/index.html', {'projects': projects})
+
+    def estimate(request):
+        project_id = int(request.GET.get('project_id'))
+        grow_model = request.GET.get('grow_model')
+        evaluation_point = int(request.GET.get('evaluation_point'))
+        data = Funcs.estimate(project_id, grow_model, evaluation_point)
+        return JsonResponse({'status': 200, 'data': data})
+
+class PeController:
+    def get_pe(request):
+        project_id = request.GET.get('project_id')
+        project = get_or_none(ProjectModel, pk=project_id)
+        project_ac = project.get_ac()
+        evaluation_percents = [0.25, 0.5, 0.75]
+        grow_models = ['gompertz', 'logistic', 'bass', 'weibull']
+        data = {}
+        for grow_model in grow_models:    
+            data['{}'.format(grow_model)] = {}                    
+            for evaluation_percent in evaluation_percents:
+                evaluation_point = math.ceil(project.pd*evaluation_percent)
+                data['{}'.format(grow_model)]['{}'.format(evaluation_percent)] = Funcs.get_pe(project_id, grow_model, evaluation_point)
+        return JsonResponse({'data': data})
+    
+    def get_mape(request):
+        project_ids_str = request.GET.get('project_ids')
+        project_ids = json.loads(project_ids_str)
+        evaluation_percents = [0.25, 0.5, 0.75]
+        grow_models = ['gompertz', 'logistic', 'weibull', 'bass']
+        data = {}
+        for grow_model in grow_models:    
+            data['{}'.format(grow_model)] = {}                    
+            for evaluation_percent in evaluation_percents:
+                data['{}'.format(grow_model)]['{}'.format(evaluation_percent)] = Funcs.get_mape(project_ids, grow_model, evaluation_percent)
+        print(data)
+        return JsonResponse({'data': data})
+        

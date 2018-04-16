@@ -38,6 +38,7 @@
                     <td class="text-center">{{ user.last_name }}</td>
                     <td class="text-center">{{ user.username }}</td>
                     <td class="text-center">
+                        <a href="{% url 'tool:user_view' user.id %}" class="text-red"><i class="fa fa-eye"></i></a>                            
                         <a href="{% url 'tool:user_edit' user.id %}" class="text-red"><i class="fa fa-edit"></i></a>
                         <a href="{% url 'tool:user_delete' user.id %}" class="text-red icon-delete"><i class="fa fa-trash-o"></i></a>
                     </td>

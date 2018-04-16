@@ -75,8 +75,12 @@ li.member-item-field:hover{
 .add-project-member-box {
     margin-top: 50px;
     background-color: #e5dbdc;
-    margin-left: 150px;
-    width: calc(100% - 200px)
+}
+
+.project-creation-form .add-project-member-box, 
+.project-update-form .add-project-member-box {
+    margin-left: 150px;    
+    width: calc(100% - 200px)    
 }
 
 .add-project-member-area .search-member,
@@ -135,4 +139,9 @@ ul.search-result {
 
 .btn-sm {
     min-width: 30px!important;
+}
+
+.table-project-detail td.field-name {
+    font-weight: bold!important;
+    width: 20%;    
 }

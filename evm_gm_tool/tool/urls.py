@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .forms import CustomAuthForm
 from django.contrib.auth.views import login, logout
 from django.conf import settings
 from django.conf.urls.static import static
@@ -9,8 +10,10 @@ urlpatterns = [
     path("", views.Dashboard.index, name="homepage"),   
     path("error/no_access", views.Dashboard.error_no_access, name="error_no_access"),   
     path("page_not_found", views.Dashboard.page_not_found, name="page_not_found"),   
-    path("login/", login, {'template_name': 'evm_gm_tool/auth/login.html'}, name='login'),
+    path("login/", login, {'template_name': 'tool/auth/login.html', 'authentication_form': CustomAuthForm}, name='login'),
+    path("logout/", logout, {'template_name': 'tool/auth/logout.html'}, name='logout'),
     path("users/", views.UserController.index, name="user_index"),
+    path("user/view/<id>", views.UserController.view, name="user_view"),        
     path("user/add/", views.UserController.create, name="user_add"),
     path("user/edit/<id>", views.UserController.edit, name="user_edit"),
     path("user/delete/<id>", views.UserController.delete, name="user_delete"),
@@ -21,6 +24,8 @@ urlpatterns = [
     path("project/delete/<id>", views.ProjectController.delete, name="project_delete"),
     path("estimate/", views.EstimateController.index, name="estimate_index"),
     path("estimate/estimate", views.EstimateController.estimate, name="estimate_estimate"),
+    path("pe/get_pe", views.PeController.get_pe, name="pe_get_pe"),
+    path("pe/get_mape", views.PeController.get_mape, name="pe_get_mape"),
     path("common/upload_csv", views.CommonController.upload_csv, name="common_upload_csv"),        
     path("ajax/search_user", views.AjaxController.search_user, name="ajax_search_user"),   
     path("ajax/add_project_member", views.AjaxController.add_project_memger, name="ajax_add_project_member"),

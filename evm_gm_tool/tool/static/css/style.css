@@ -8,10 +8,10 @@
     display: none!important;
 }
 
-a.btn {
+button {
     min-width: 150px;
 }
 
-button {
-    min-width: 150px;
+.custom-table-border tr td {
+    border: 1px solid #b2b2b2!important;
 }

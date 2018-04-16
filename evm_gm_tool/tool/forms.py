@@ -1,6 +1,22 @@
 from .models import User, Project, ProjectMember
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import AuthenticationForm
+
+
+class CustomAuthForm(AuthenticationForm):
+    username = forms.CharField(widget=forms.TextInput(
+        attrs={
+            'class':'validate',
+            'placeholder': 'Username'
+        }
+    ))
+    password = forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'placeholder':'Password'
+        }
+    ))
+
 class UserCreateForm(UserCreationForm):
     email = forms.CharField(widget=forms.EmailInput(
         attrs={'class': 'validate form-control'}
@@ -145,6 +161,19 @@ class ProjectEditForm(forms.ModelForm):
     ))
 
 
+    class Meta:
+        model = Project
+        fields = (
+            'id',
+            'name',
+            'desc',
+            'status',
+            'budget',
+            'pd',
+            'owner'
+        )
+
+class ProjectViewForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = (

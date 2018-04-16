@@ -3,9 +3,11 @@
 <h1>Projects</h1>
 {% block content %}
 {% load static %}
-
+{% load project %}
 <h1>User Managers</h1>
+{% if request.user.is_superuser %}
 <a href="{% url 'tool:project_create' %}" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> New Project</a>
+{% endif %}
 <table class="table table-bordered table-striped" id='crud-table'>
     <thead>
       <tr>
@@ -20,16 +22,21 @@
           
     <tbody>
         {% for project in projects %}
+        
             <tr>
                 <td class="text-center">{{ project.id }}</td>
-                <td class="text-center">{{ project.name }}</td>
+                <td class="text-center"><a href="{% url 'tool:project_view' project.id %}">{{ project.name }}</a></td>
                 <td class="text-center">{{ project.budget }}</td>
                 <td class="text-center">{{ project.pd }}</td>
                 <td class="text-center">{{ project.owner.username }}</td>
                 <td class="text-center">
                     <a href="{% url 'tool:project_view' project.id %}" class="text-red"><i class="fa fa-eye"></i></a>
-                    <a href="{% url 'tool:project_edit' project.id %}" class="text-red"><i class="fa fa-edit"></i></a>
-                    <a href="{% url 'tool:project_delete' project.id %}" class="text-red icon-delete"><i class="fa fa-trash-o"></i></a>
+                    {% if request.user|has_write_permission:project %}
+                    <a href="{% url 'tool:project_edit' project.id %}" class="text-red"><i class="fa fa-edit"></i></a>                    
+                    {% endif %}
+                    {% if request.user|has_all_permission:project %}
+                    <a href="{% url 'tool:project_delete' project.id %}" class="text-red icon-delete"><i class="fa fa-trash-o"></i></a>                    
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}

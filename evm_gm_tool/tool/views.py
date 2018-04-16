@@ -19,7 +19,9 @@ from .controllers.ajax_controller import *
 # Create your views here.
 class Dashboard:
     def index(request):
-        return render(request, 'tool/dashboard/index.html')
+        number_user = User.objects.all().count()
+        number_project = len(ProjectModel.get_projects_has_access(request.user.id))
+        return render(request, 'tool/dashboard/index.html', {'number_user': number_user, 'number_project': number_project})
     
     def error_no_access(request):
         return render(request, 'tool/dashboard/no_access.html')        

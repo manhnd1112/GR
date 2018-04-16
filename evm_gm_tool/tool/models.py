@@ -2,6 +2,7 @@ from django.db import models
 from enum import IntEnum
 from django.contrib.auth.models import User
 from .utilies import *
+import json
 
 # Create your models here.
 class UserProfile(models.Model):
@@ -26,17 +27,47 @@ class Project(models.Model):
     class Meta:
         db_table = "project"
 
+    def get_ac(self):
+        project_status = json.loads(self.status)
+        if len(project_status) > 0:
+            return project_status[len(project_status) - 1]["AC"]
+        return 0
+
     def get_projects_has_access(user_id):
         user = get_or_none(User, pk = user_id)
         if user is None:
             return None
         projects = []
+        if user.is_superuser:
+            for project in Project.objects.all():
+                projects.append(project)
+            return projects
         projects_as_onwer = Project.objects.filter(owner=user)
         project_members = ProjectMember.objects.filter(user=user)
         for project in projects_as_onwer:
             projects.append(project)
+        
+        for project_member in project_members:
+            projects.append(project_member.project)
         return projects
 
+    def get_group_access(user_id, project_id):
+        project = get_or_none(Project, pk=project_id)
+        user = get_or_none(User, pk=user_id)
+        if project is None or user is None:
+            return -1
+        if user.is_superuser:
+            return GroupAccess.SUPERUSER
+        if user == project.owner:
+            return GroupAccess.OWNER
+        try:
+            project_member = ProjectMember.objects.get(project_id=project_id, user_id=user_id)
+            return project_member.access
+        except ProjectMember.DoesNotExist:
+            return -1
+    
+
+            
 class ProjectMember(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -63,19 +94,14 @@ class ProjectMember(models.Model):
 
     def add_member_list(project, user_create, member_list):
         group_access = ProjectMember.get_group_access(user_create.id, project.id)
-        print(group_access)
         if group_access != GroupAccess.SUPERUSER and group_access != GroupAccess.OWNER and group_access != GroupAccess.ADMIN:
             return -1 # don't have access to update members
-        print(member_list)
-        print("abc")
         for member in member_list:
             member_user = User.objects.get(pk=member["user-id"])
             project_member = get_or_none(ProjectMember, project=project, user=member_user)
-            print(project_member)
             if project_member is None:
                 new_project_member = ProjectMember(project=project, user=member_user, access=member["group-access"])
                 new_project_member.save(True)
-                print(new_project_member)
         return 0 # update success
 
     def remove_project_member(user_create, project_id, project_member_id):
@@ -123,10 +149,10 @@ class ProjectMember(models.Model):
         for member_q in members_qs:
             member = {}
             member["id"] = member_q.id
-            member["project-id"] = member_q.project.id 
-            member["user-id"] = member_q.user.id 
+            member["project_id"] = member_q.project.id 
+            member["user_id"] = member_q.user.id 
             member["username"] = member_q.user.username 
-            member["group-access"] = member_q.access 
+            member["group_access"] = member_q.access 
             members.append(member)
         return members        
 

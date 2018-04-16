@@ -12,6 +12,8 @@ from django.contrib import messages
 
 class UserController:
     def index(request):
+        if not request.user.is_superuser:
+            return redirect('tool:error_no_access')
         user_list = User.objects.all()
         paginator = Paginator(user_list, 3) # Show 25 contacts per page
 
@@ -19,9 +21,16 @@ class UserController:
         users = paginator.get_page(page)
         return render(request, 'tool/user/index.html', {'users': users})
 
+    def view(request, id):
+        if not request.user.is_superuser:
+            return redirect('tool:error_no_access')
+        user = get_or_none(User, pk=id)
+        if user is None:
+            return redirect('tool:page_not_found')
+        return render(request, 'tool/user/view.html', {'user': user})
+
     def create(request):
-        is_admin = request.user.is_superuser
-        if not is_admin:
+        if not request.user.is_superuser:
             return redirect('tool:error_no_access')
 
         if request.method == "POST":
@@ -39,8 +48,7 @@ class UserController:
             return render(request, 'tool/user/create.html', args)
 
     def edit(request, id):
-        is_admin = request.user.is_superuser
-        if not is_admin:
+        if not request.user.is_superuser:
             return redirect('tool:error_no_access')
         user_edit = get_or_none(User, pk=id)
         if user_edit is None:
@@ -68,11 +76,3 @@ class UserController:
         user_remove.delete()
         messages.success(request, 'User deleted successfully.')
         return redirect('tool:user_index')
-
-    # def ajax_search(request):
-    #     keyword = request.GET.get('keyword')
-    #     print(keyword)
-    #     # users = User.objects.filter(username__regex=r'^.*{}.*$'.format(keyword))
-    #     users = User.objects.filter(username__icontains = keyword)
-    #     users_list = list(users.values_list('id', 'username'))    
-    #     return JsonResponse({'users': users_list})

@@ -1,0 +1,35 @@
+{% extends 'tool/layout/layout.html' %}
+
+{% block body %}
+{% load static %}
+<div class="project-view">
+    <table class="table table-bordered table-project-detail custom-table-border">
+        <tbody>
+            <tr>
+                <td class="field-name">Email</td>
+                <td>{{user.email}}</td>
+            </tr>
+            <tr>
+                <td class="field-name">Username</td>
+                <td>{{user.username}}</td>
+            </tr>
+            <tr>
+                <td class="field-name">First Name</td>
+                <td>{{user.first_name}}</td>
+            </tr>
+            <tr>
+                <td class="field-name">Last Name</td>
+                <td>{{user.last_name}}</td>
+            </tr>
+            <tr>
+                <td class="field-name">Is Super User</td>
+                <td>{% if user.is_superuser %}Yes{% else %}No{% endif %}</td>
+            </tr>
+            <tr>
+                <td class="field-name">Is Active</td>
+                <td>{% if user.is_active %}Yes{% else %}No{% endif %}</td>
+            </tr>    
+        </tbody>
+    </table>
+</div>
+{% endblock %}
