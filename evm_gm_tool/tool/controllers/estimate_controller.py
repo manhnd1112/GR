@@ -149,7 +149,7 @@ class Funcs:
         
         return round(project_status[evaluation_index]['AC'] + restBudget, 2)
 
-    def optimizeLeastSquares(growModel, xdata, ydata, method = 'dogbox'):
+    def optimizeLeastSquares(growModel, xdata, ydata, method = 'trf'):
         x0 = [0.1, 0.2, 0.3] 
         if(growModel == 'gompertz'):
             OptimizeResult  = optimize.least_squares(Funcs.residuals,  x0,method = method,
@@ -171,7 +171,7 @@ class Funcs:
         parametersEstimated = OptimizeResult.x
         return parametersEstimated
 
-    def estimate(project_id, grow_model, evaluation_point):
+    def estimate(project_id, grow_model, evaluation_point, algorithm="trf"):
         project = get_or_none(ProjectModel, pk=project_id)
         if project is None:
             return {}
@@ -217,7 +217,7 @@ class Funcs:
         CIt = Funcs.getCIt(CPI, 0.8, SPIt, 0.2)
         EAC5_CI = Funcs.getEAC(project_status, budget, evaluation_index, CI)
         EAC5_CIt = Funcs.getEAC(project_status, budget, evaluation_index, CIt)
-        parametersEstimated = Funcs.optimizeLeastSquares(grow_model, xdata, ydata)
+        parametersEstimated = Funcs.optimizeLeastSquares(grow_model, xdata, ydata, method=algorithm)
         EAC_GM1 = Funcs.getEACGM(project_status, xdata, evaluation_index, grow_model, parametersEstimated, budget, 1.0)
         EAC_GM2 = Funcs.getEACGM(project_status, xdata, evaluation_index, grow_model, parametersEstimated, budget, 1.0/SPIt)
         alpha = parametersEstimated[0]
@@ -344,7 +344,8 @@ class EstimateController:
         project_id = int(request.GET.get('project_id'))
         grow_model = request.GET.get('grow_model')
         evaluation_point = int(request.GET.get('evaluation_point'))
-        data = Funcs.estimate(project_id, grow_model, evaluation_point)
+        algorithm = request.GET.get('algorithm')
+        data = Funcs.estimate(project_id, grow_model, evaluation_point, algorithm)
         return JsonResponse({'status': 200, 'data': data})
 
 class PeController:
@@ -372,6 +373,5 @@ class PeController:
             data['{}'.format(grow_model)] = {}                    
             for evaluation_percent in evaluation_percents:
                 data['{}'.format(grow_model)]['{}'.format(evaluation_percent)] = Funcs.get_mape(project_ids, grow_model, evaluation_percent)
-        print(data)
         return JsonResponse({'data': data})
         

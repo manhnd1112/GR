@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.admin import User
-from tool.models import Project as ProjectModel, ProjectMember, GroupAccess
+from tool.models import Project as ProjectModel, ProjectMember, GroupAccess, UserProfile
 from tool.forms import UserCreateForm, UserEditForm, ProjectCreationForm, ProjectEditForm
 from tool.utilies import *
 import xlrd, json

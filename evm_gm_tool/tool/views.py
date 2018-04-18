@@ -11,6 +11,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 
 from .controllers.user_controller import *
+from .controllers.user_profile_controller import *
 from .controllers.project_controller import *
 from .controllers.estimate_controller import *
 from .controllers.common_controller import *

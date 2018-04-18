@@ -4,8 +4,8 @@
     {% load static %}
     <link rel="stylesheet"  type="text/css" href="{% static 'css/project.css' %}">
     <script src="{% static 'js/project.js' %}"></script>  
-    {% if errors %}
-        {{errors}}
+    {% if form %}
+        {% include 'tool/common/errors.html' with form=form%}
     {% endif %}
     {% block content %}
     {% endblock %}

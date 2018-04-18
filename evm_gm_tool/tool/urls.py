@@ -17,6 +17,7 @@ urlpatterns = [
     path("user/add/", views.UserController.create, name="user_add"),
     path("user/edit/<id>", views.UserController.edit, name="user_edit"),
     path("user/delete/<id>", views.UserController.delete, name="user_delete"),
+    path("user_profile/edit/<id>", views.UserProfileController.edit, name="user_profile_edit"),
     path("projects/", views.ProjectController.index, name="project_index"),
     path("project/create/", views.ProjectController.create, name="project_create"),
     path("project/view/<id>", views.ProjectController.view, name="project_view"),    
@@ -32,4 +33,4 @@ urlpatterns = [
     path("ajax/update_group_access", views.AjaxController.update_group_access, name="ajax_update_group_access"),
     path("ajax/remove_member", views.AjaxController.remove_project_member, name="ajax_remove_member"),
     path("ajax/get_project_detail", views.AjaxController.get_project_detail, name="ajax_get_project_detail"),    
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

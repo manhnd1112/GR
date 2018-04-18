@@ -1,4 +1,4 @@
-from .models import User, Project, ProjectMember
+from .models import User, Project, ProjectMember, UserProfile
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.forms import AuthenticationForm
@@ -41,13 +41,13 @@ class UserCreateForm(UserCreationForm):
         attrs={
             'class': 'form-control'
         }
-    ))
+    ), label='Password')
 
     password2 = forms.CharField(widget=forms.PasswordInput(
         attrs={
             'class': 'form-control'
         }
-    ))
+    ), label='Password Confirmation')
 
     class Meta:
         model = User
@@ -98,6 +98,10 @@ class UserEditForm(UserChangeForm):
             'password'
         )
 
+        labels = {
+            'is_superuser': 'Is Admin',
+        }
+
 class ProjectCreationForm(forms.ModelForm):
     name = forms.CharField(widget=forms.TextInput(
         attrs={'class': 'validate form-control'}
@@ -106,7 +110,7 @@ class ProjectCreationForm(forms.ModelForm):
         attrs={
             'class': 'form-control'
         }
-    ))
+    ), required=False, label="Description")
     budget = forms.FloatField(widget=forms.NumberInput(
         attrs={
             'class': 'form-control',
@@ -118,7 +122,7 @@ class ProjectCreationForm(forms.ModelForm):
             'class': 'form-control',
             'step': 'any'
         }
-    ))
+    ), label="Project Duration")
 
 
     class Meta:
@@ -132,6 +136,10 @@ class ProjectCreationForm(forms.ModelForm):
             'pd',
             'owner'
         )
+
+        labels = {
+            'desc': 'Description'
+        }
 
 class ProjectEditForm(forms.ModelForm):
     id = forms.IntegerField(widget=forms.NumberInput(
@@ -146,7 +154,7 @@ class ProjectEditForm(forms.ModelForm):
         attrs={
             'class': 'form-control'
         }
-    ))
+    ), required=False, label="Description")
     budget = forms.FloatField(widget=forms.NumberInput(
         attrs={
             'class': 'form-control',
@@ -158,7 +166,7 @@ class ProjectEditForm(forms.ModelForm):
             'class': 'form-control',
             'step': 'any'
         }
-    ))
+    ), label="Project Duration")
 
 
     class Meta:
@@ -172,6 +180,10 @@ class ProjectEditForm(forms.ModelForm):
             'pd',
             'owner'
         )
+
+        labels = {
+            'desc': 'Description'
+        }
 
 class ProjectViewForm(forms.ModelForm):
     class Meta:
@@ -185,3 +197,32 @@ class ProjectViewForm(forms.ModelForm):
             'pd',
             'owner'
         )
+
+        labels = {
+            'desc': 'Description',
+            'pd': 'Project Duration'
+        }
+
+class EditProfileForm(forms.ModelForm):
+    role = forms.CharField(widget=forms.TextInput(
+        attrs={
+            'class': 'form-control role'
+        }
+    ), required=False, label='Work as')
+    desc = forms.CharField(widget=forms.Textarea(
+        attrs={
+            'class': 'form-control desc'
+        }
+    ), required=False)
+    class Meta:
+        model = UserProfile
+
+        fields = (
+            'avatar',
+            'role',            
+            'desc'
+        )
+
+        labels = {
+            'role': 'Work as'
+        }

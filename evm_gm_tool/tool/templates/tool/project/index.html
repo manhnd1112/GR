@@ -4,19 +4,37 @@
 {% block content %}
 {% load static %}
 {% load project %}
-<h1>User Managers</h1>
+<h1>Project Management Dashboard</h1>
 {% if request.user.is_superuser %}
 <a href="{% url 'tool:project_create' %}" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> New Project</a>
 {% endif %}
-<table class="table table-bordered table-striped" id='crud-table'>
+<table class="table table-bordered table-striped project-list" id='crud-table'>
     <thead>
       <tr>
-        <th class="text-center" id="id" type="text" prime="true" static="true">ID</th>
-        <th class="text-center" id="name" type="text">Project Name</th>
-        <th class="text-center" id="budget" type="text">Budget</th>
-        <th class="text-center" id="duration" type="text">Project Duration</th>
-        <th class="text-center" id="duration" type="text">Owner</th>
-        <th class="text-center">Action</th>
+        <th data-sort="int" data-sort-default="asc" class="text-center" id="id" type="text" prime="true" static="true">
+            ID
+            <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+        </th>
+        <th data-sort="string" class="text-center" id="name" type="text">
+            Project Name
+            <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+        </th>
+        <th data-sort="float" class="text-center" id="budget" type="text">
+            Budget
+            <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+        </th>
+        <th data-sort="float" class="text-center" id="duration" type="text">
+            Project Duration
+            <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+        </th>
+        <th data-sort="string" class="text-center" id="duration" type="text">
+            Owner
+            <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+        </th>
+        <th class="text-center">
+            Action
+            <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+        </th>
       </tr>
     </thead>
           
@@ -46,21 +64,26 @@
 </table>
     
 
-<div class="pagination">
-    <span class="step-links">
-        {% if projects.has_previous %}
-            <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ projects.previous_page_number }}">previous</a>
-        {% endif %}
+{% if projects.has_other_pages %}
+<ul class="pagination">
+  {% if projects.has_previous %}
+    <li><a href="?page={{ projects.previous_page_number }}">&laquo;</a></li>
+  {% else %}
+    <li class="disabled"><span>&laquo;</span></li>
+  {% endif %}
+  {% for i in projects.paginator.page_range %}
+    {% if projects.number == i %}
+      <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+    {% else %}
+      <li><a href="?page={{ i }}">{{ i }}</a></li>
+    {% endif %}
+  {% endfor %}
+  {% if projects.has_next %}
+    <li><a href="?page={{ projects.next_page_number }}">&raquo;</a></li>
+  {% else %}
+    <li class="disabled"><span>&raquo;</span></li>
+  {% endif %}
+</ul>
+{% endif %}
 
-        <span class="current">
-            Page {{ projects.number }} of {{ projects.paginator.num_pages }}.
-        </span>
-
-        {% if projects.has_next %}
-            <a href="?page={{ projects.next_page_number }}">next</a>
-            <a href="?page={{ projects.paginator.num_pages }}">last &raquo;</a>
-        {% endif %}
-    </span>
-</div>
 {% endblock %}

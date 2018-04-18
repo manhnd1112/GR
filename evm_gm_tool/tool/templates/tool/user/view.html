@@ -2,8 +2,18 @@
 
 {% block body %}
 {% load static %}
-<div class="project-view">
-    <table class="table table-bordered table-project-detail custom-table-border">
+<script src="{% static 'js/user.js' %}"></script>
+<div class="user-view">
+    {% block header_title %}
+        <h1>User Detail</h1>
+    {% endblock %}
+    {% if request.user.is_superuser %}
+    <div>
+        <a href="{% url 'tool:user_edit' user.id %}" class="btn btn-primary">Edit</a>
+        <a href="{% url 'tool:user_delete' user.id %}" class="btn btn-danger btn-delete-user">Delete</a>
+    </div><br>
+    {% endif %}
+    <table class="table table-bordered table-user-detail custom-table-border">
         <tbody>
             <tr>
                 <td class="field-name">Email</td>

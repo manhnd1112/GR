@@ -52,14 +52,17 @@ $(document).ready(function(){
         var budget = $('#budget').val()
         var evaluation_point = $('#evaluation-point').val()
         var grow_model = $('input[name=grow-model]:checked').val()
+        var algorithm = $('input[name=algorithm]:checked').val()
         var selected_project_id = $('.project-select-box option:selected').val()
+        console.log(algorithm)
         $.ajax({
             type: 'GET',
             url: `${BASE_SERVER_IP}/tool/estimate/estimate`,
             data: {
                 'project_id': selected_project_id,
                 'evaluation_point': evaluation_point,
-                'grow_model': grow_model
+                'grow_model': grow_model,
+                'algorithm': algorithm
             },
             success: function(res) {   
                 if(res.status = 200) {
@@ -99,4 +102,10 @@ $(document).ready(function(){
             }
         })
     })
+
+    function export_xlsx() {
+        var opts = [{sheetid:'Sheet One',header:true}];
+        var result = alasql('SELECT * INTO XLSX("'+this.keyword+'_page_from'+this.pageStart+"-"+this.pageEnd+'_favorite_'+this.lowestFavoriteNumber+'.xlsx",?) FROM ?',
+                          [opts,[this.data]]);
+    }
 })

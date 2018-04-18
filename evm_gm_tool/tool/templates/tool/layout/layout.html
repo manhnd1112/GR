@@ -3,9 +3,10 @@
 {% block head %}
 <head>
     <title>
-        {% block title %}My app{% endblock %}
+        {% block title %}EVM&GM Tool | Dashboard{% endblock %}
     </title>
     {% load static %}
+    {% load common %}
     <link rel="stylesheet"  type="text/css" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet"  type="text/css" href="{% static 'js/bootstrap.min.js' %}">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">        
@@ -17,7 +18,7 @@
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>AdminLTE 2 | Dashboard</title>
+    <title>EVM & GM Tool | Dashboard</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
@@ -64,7 +65,7 @@
     <!-- Logo -->
     <a href="{% url 'tool:homepage' %}" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><b>A</b>LT</span>
+      <span class="logo-mini"></span>
       <!-- logo for regular state and mobile devices -->
       <span class="logo-lg"><b>EVM&GM</b> Tool</span>
     </a>
@@ -80,23 +81,25 @@
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsAUelg7yg0mepGMf-N93hh6E9XrLnKwsKa4YEQ6swhDknk4F9eQ" class="user-image" alt="User Image">
-              <span class="hidden-xs">{{ request.user.first_name }} {{ request.user.last_name }}</span>
+              <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsAUelg7yg0mepGMf-N93hh6E9XrLnKwsKa4YEQ6swhDknk4F9eQ" class="user-image" alt="User Image"> -->
+              <img src="{{request.user|get_avatar_url}}"  class="user-image" alt="User Image">              
+              <span class="hidden-xs">{{ request.user.username }}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsAUelg7yg0mepGMf-N93hh6E9XrLnKwsKa4YEQ6swhDknk4F9eQ" class="img-circle" alt="User Image">
-
+                <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsAUelg7yg0mepGMf-N93hh6E9XrLnKwsKa4YEQ6swhDknk4F9eQ" class="img-circle" alt="User Image"> -->
+                <img src="{{request.user|get_avatar_url}}" class="img-circle" alt="User Image">
                 <p>
-                  Alexander Pierce - Web Developer
+                  {{ request.user.first_name }} {{ request.user.last_name }}
+                  <p>{{request.user.userprofile.role}}</p>
                   <!-- <small>Member since Nov. 2012</small> -->
                 </p>
               </li>
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
-                  <a href="#" class="btn btn-default btn-flat">Profile</a>
+                  <a href="{% url 'tool:user_profile_edit' request.user.id %}" class="btn btn-default btn-flat">Profile</a>
                 </div>
                 <div class="pull-right">
                   <a href="{% url 'tool:logout' %}" class="btn btn-default btn-flat">Sign out</a>
@@ -136,7 +139,6 @@
           <a href="{% url 'tool:user_index' %}">
             <i class="fa fa-users" aria-hidden="true"></i> <span>Users</span>
             <span class="pull-right-container">
-              <small class="label pull-right bg-green">new</small>
             </span>
           </a>
         </li>
@@ -145,7 +147,6 @@
             <a href="{% url 'tool:project_index' %}">
               <i class="fa fa-tasks" aria-hidden="true"></i> <span>Projects</span>
               <span class="pull-right-container">
-                <small class="label pull-right bg-green">new</small>
               </span>
             </a>
         </li>
@@ -185,10 +186,9 @@
   <!-- /.content-wrapper -->
   <footer class="main-footer">
     <div class="pull-right hidden-xs">
-      <b>Version</b> 2.4.0
+      <b>Version</b> 1.0
     </div>
-    <strong>Copyright &copy; 2014-2016 <a href="https://adminlte.io">Almsaeed Studio</a>.</strong> All rights
-    reserved.
+    <strong>Copyright &copy; 2018 <a href="https://adminlte.io">Manhnd's Graduation Thesis</a>.</strong>
   </footer>
 </div>
 <!-- ./wrapper -->
@@ -233,5 +233,8 @@
 <script src="{% static 'dist/js/pages/dashboard.js' %}"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="{% static 'dist/js/demo.js' %}"></script>
+<!-- Export xlsx library -->
+<script src="{% static 'js/alasql.min.js' %}"></script>
+<script src="{% static 'js/xlsx.core.min.js' %}"></script>
 </body>
 </html>

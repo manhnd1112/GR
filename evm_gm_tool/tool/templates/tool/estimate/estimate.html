@@ -71,11 +71,22 @@
                 <div class="col-md-9">
                     <input type="radio" name="grow-model" value="gompertz" id="gm" checked="checked">Gompertz Model
                     <input type="radio" name="grow-model" value="logistic" id="lm">Logistic Model                        
-                    <input type="radio" name="grow-model" value="bass" id="lm">Bass Model                        
-                    <input type="radio" name="grow-model" value="weibull" id="lm">Weibull Model                        
-                    <input type="radio" name="grow-model" value="log_logistic" id="lm">Log Logistic Model                        
+                    <input type="radio" name="grow-model" value="bass" id="bm">Bass Model                        
+                    <input type="radio" name="grow-model" value="weibull" id="wm">Weibull Model                        
+                    <input type="radio" name="grow-model" value="log_logistic" id="llm">Log Logistic Model                        
                 </div>
             </div>
+            <br>
+            <div class="col-md-12">
+                    <div class="col-md-3">
+                        <label for="gm">Estimate Algorithm (Least square)</label>     
+                    </div>
+                    <div class="col-md-9">
+                        <input type="radio" name="algorithm" value="trf" checked="checked"> Trust Region Reflective
+                        <input type="radio" name="algorithm" value="dogbox">Dogleg                        
+                        <input type="radio" name="algorithm" value="lm">Levenberg-Marquardt                        
+                    </div>
+                </div>
             <br>
             <div class="col-md-12">
                 <div class="col-md-3"></div>

@@ -148,3 +148,7 @@ LOGIN_EXEMPLT_URLS = (
 ADMIN_URL = re.compile(r'^admin')
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+MEDIA_URL = 'media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')

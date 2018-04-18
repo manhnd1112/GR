@@ -3,21 +3,29 @@ from enum import IntEnum
 from django.contrib.auth.models import User
 from .utilies import *
 import json
+from django.db.models.signals import post_save
 
 # Create your models here.
 class UserProfile(models.Model):
     # members = models.ManyToManyField(Person, through='Membership')
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar = models.ImageField(upload_to="profile_image", blank=True)
+    role = models.CharField(max_length=255, default='', blank=True)
     desc = models.TextField(default='', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     class Meta:
         db_table = "user_profile"
 
+def create_profile(sender, **kwargs):
+    if kwargs['created']:
+        user_profile = UserProfile.objects.create(user=kwargs['instance'])
+
+post_save.connect(create_profile, sender=User)
+
 class Project(models.Model):
     name = models.CharField(max_length=255)
-    desc = models.TextField(default='', blank=True)
+    desc = models.TextField(default='', blank=True )
     status =  models.TextField(default='', blank=True) # save array of json objects: [{'AT': 1, 'PV': 10, 'EV': 7, 'AC':12}]
     budget = models.FloatField(default=0)
     pd = models.FloatField(default=0) 

@@ -14,6 +14,8 @@ $(document).ready(function(){
     var search_result_member_item_field = $('.search-result-member-item-field');
     var member_item_field = $('.member-item-field');
 
+    $("table.project-list").stupidtable();    
+
     gennerate_project_status_html();
     gennerate_project_member_html();
 

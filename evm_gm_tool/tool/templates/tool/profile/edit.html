@@ -1,0 +1,37 @@
+{% extends 'tool/layout/layout.html' %}
+
+{% block body %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+<script src="{% static 'js/profile.js' %}"></script>
+{% load common %}
+<!-- <link rel="stylesheet"  type="text/css" href="{% static 'css/user.css' %}"> -->
+<div class="container">
+    <h1>Edit Profile</h1>
+    {% include 'tool/common/errors.html' with form=form%}    
+    <form action="" method="POST" class="profile-edit-form" enctype="multipart/form-data"> 
+        {% csrf_token %}
+        <div class="col-md-3">
+            <img src="{{request.user|get_avatar_url}}" alt="" width="200" height="200" class="avatar">
+            <input type="file" name="avatar" id="id_avatar">
+        </div>
+        <div class="col-md-7">
+            {% for field in form %}
+                {% if field.name != 'avatar'%}
+                    <div class="form-group">
+                        {{ field.label_tag }} {{ field }}      
+                        {% if field.name == 'role' %}
+                            <ul name="" class="role-list">
+                                                
+                            </ul>
+                            <li class="role-template role-field" style="display: none"></li>
+                        {% endif %}          
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <button type="submit" class="btn btn-update btn-success">Update</button>
+        </div>
+        
+    </form>
+</div>
+{% endblock %}

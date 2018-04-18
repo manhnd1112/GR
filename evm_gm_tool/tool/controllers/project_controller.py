@@ -22,7 +22,7 @@ class ProjectController:
         if not request.user.is_superuser:
             return redirect('tool:error_no_access')
         if request.method == "POST":
-            form = ProjectCreationForm(request.POST)
+            form = ProjectCreationForm(request.POST or None)
             args = {'form': form}                     
             if form.is_valid():
                 new_project = form.save()

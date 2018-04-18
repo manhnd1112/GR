@@ -5,7 +5,7 @@
 <link rel="stylesheet"  type="text/css" href="{% static 'css/user.css' %}">
 
 <div class="container">
-    <h1>Edit Profile</h1>
+    <h1>Edit User Information</h1>
     {% include 'tool/common/errors.html' with form=form%}
     <form action="" method="POST" class="user-edit-form">
         {% csrf_token %}

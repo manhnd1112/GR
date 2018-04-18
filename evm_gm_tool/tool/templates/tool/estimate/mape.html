@@ -3,7 +3,7 @@
 <script src="{% static 'js/mape.js' %}"></script>  
 <div>
     <label for="">Choose Project</label>
-    <select class="mape-project-select-box">
+       <select class="mape-project-select-box">
         <option value="all">All project</option>
         {% for project in projects %}
             <option value="{{ project.id }}" 
@@ -12,6 +12,8 @@
             </option>        
         {% endfor %}
     </select>
+    <input type="radio" value="by-phase" name="how-show-pe" checked> By Phase    
+    <input type="radio" value="all-time" name="how-show-pe"> All Time
     <canvas id="myChart" width="200" height="200"></canvas>
     <canvas id="chartLogistic" width="200" height="200"></canvas>
     <canvas id="chartWeibull" width="200" height="200"></canvas>
