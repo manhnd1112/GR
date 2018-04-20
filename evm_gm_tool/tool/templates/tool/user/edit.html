@@ -1,6 +1,12 @@
 {% extends 'tool/layout/layout.html' %}
 
 {% block body %}
+<section class="content-header">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'tool:homepage' %}"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">User Edit</li>
+    </ol>
+</section>
 {% load static %}
 <link rel="stylesheet"  type="text/css" href="{% static 'css/user.css' %}">
 

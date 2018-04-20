@@ -1,8 +1,9 @@
 {% extends 'tool/layout/auth_layout.html' %}
 {% block title %}Login{% endblock %}
 {% block body %}
+    {% include 'tool/common/errors.html' with form=form%}        
     <form action="" method="post" class="login-form">
-        <h3 class="form-title">EVM & GM Tool Administration</h3>
+        <h3 class="form-title textcenter">EVM & GM Tool Administration</h3>
         {% csrf_token %}
         {% for field in form %}
         <div class="form-group">

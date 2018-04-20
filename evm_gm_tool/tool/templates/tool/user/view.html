@@ -1,6 +1,12 @@
 {% extends 'tool/layout/layout.html' %}
 
 {% block body %}
+<section class="content-header">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'tool:homepage' %}"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">User Detail</li>
+    </ol>
+</section>
 {% load static %}
 <script src="{% static 'js/user.js' %}"></script>
 <div class="user-view">

@@ -1,5 +1,4 @@
 $(document).ready(function(){
-    var BASE_SERVER_IP = 'http://127.0.0.1:8000'
     var project_status = []
 
     function create_bar_chart(ctx) {
@@ -13,7 +12,9 @@ $(document).ready(function(){
                             beginAtZero:true
                         }
                     }]
-                }
+                },
+                responsive: true,
+                maintainAspectRatio: false
             }
         });
     }
@@ -22,7 +23,7 @@ $(document).ready(function(){
     var ctx_logistic = document.getElementById("chartLogistic").getContext('2d');    
     var ctx_weibull = document.getElementById("chartWeibull").getContext('2d');    
     var ctx_bass = document.getElementById("chartBass").getContext('2d');    
-    
+
     var chart_gomperzt = create_bar_chart(ctx)
     var chart_logistic = create_bar_chart(ctx_logistic)
     var chart_weibull = create_bar_chart(ctx_weibull)    
@@ -41,7 +42,7 @@ $(document).ready(function(){
             }
             $.ajax({
                 type: 'GET',
-                url: `${BASE_SERVER_IP}/tool/pe/get_mape`,
+                url: '/pe/get_mape',
                 data: {
                     'project_ids': JSON.stringify(project_ids)
                 },
@@ -69,7 +70,7 @@ $(document).ready(function(){
         } else {
             $.ajax({
                 type: 'GET',
-                url: `${BASE_SERVER_IP}/tool/pe/get_pe`,
+                url: '/pe/get_pe',
                 data: {
                     'project_id': selected_project_id
                 },

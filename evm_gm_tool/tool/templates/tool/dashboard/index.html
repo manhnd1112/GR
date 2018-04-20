@@ -1,54 +1,49 @@
 {% extends 'tool/layout/layout.html' %}
 
 {% block body %}
-  <!-- Content Header (Page header) -->
   <section class="content-header">
-    <h1>
-      Dashboard
-      <small>Control panel</small>
-    </h1>
-    <ol class="breadcrumb">
-      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-      <li class="active">Dashboard</li>
-    </ol>
+      <ol class="breadcrumb">
+          <li><a href="{% url 'tool:homepage' %}"><i class="fa fa-dashboard"></i> Home</a></li>
+          <li class="active">Dashboard</li>
+      </ol>
   </section>
-    <h1>Homepage</h1>
+  <h1>Homepage</h1>
           <!-- Small boxes (Stat box) -->
-          <div class="row">
-            {% if request.user.is_superuser %}
-            <div class="col-lg-3 col-xs-6">
-              <!-- small box -->
-              <div class="small-box bg-yellow">
-                <div class="inner">
-                  <h3>{{ number_user }}</h3>
-    
-                  <p>Users</p>
-                </div>
-                <div class="icon">
-                  <i class="ion ion-person-add"></i>
-                </div>
-                <a href="{% url 'tool:user_index' %}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-              </div>
-            </div>
-            {% endif %}
-            <!-- ./col -->
-            <div class="col-lg-3 col-xs-6">
-              <!-- small box -->
-              <div class="small-box bg-red">
-                <div class="inner">
-                  <h3>{{ number_project }}</h3>
-    
-                  <p>Projects</p>
-                </div>
-                <div class="icon">
-                  <i class="ion ion-pie-graph"></i>
-                </div>
-                <a href="{% url 'tool:project_index' %}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-              </div>
-            </div>
-            <!-- ./col -->
+  <div class="row">
+  {% if request.user.is_superuser %}
+      <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-yellow">
+          <div class="inner">
+            <h3>{{ number_user }}</h3>
+
+            <p>Users</p>
           </div>
-          <!-- /.row -->
+          <div class="icon">
+            <i class="ion ion-person-stalker"></i>
+          </div>
+          <a href="{% url 'tool:user_index' %}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      {% endif %}
+      <!-- ./col -->
+      <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-red">
+          <div class="inner">
+            <h3>{{ number_project }}</h3>
+
+            <p>Projects</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-ios-compose"></i>
+          </div>
+          <a href="{% url 'tool:project_index' %}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- ./col -->
+    </div>
+    <!-- /.row -->
     {% block form_content %}
     {% endblock %}
     <script type="text/javascript">

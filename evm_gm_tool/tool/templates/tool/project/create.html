@@ -2,6 +2,13 @@
 {% block title %}Add project{% endblock %}
 
 {% block content %}
+    <section class="content-header">
+        <ol class="breadcrumb">
+            <li><a href="{% url 'tool:homepage' %}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Project Creation</li>
+        </ol>
+    </section>
+    <br>
     <form action="" method="POST" class="form project-creation-form">
         {% csrf_token %}
         {% for field in form %}
@@ -42,22 +49,22 @@
         <!-- Map box -->
         <div class="box box-solid add-project-member-box">
                 <div class="box-header">
-                  <!-- tools box -->
-                  <div class="pull-right box-tools">
+                    <!-- tools box -->
+                    <div class="pull-right box-tools">
                     <button type="button" class="btn btn-primary btn-sm pull-right" data-widget="collapse"
                             data-toggle="tooltip" title="Collapse" style="margin-right: 5px;">
-                      <i class="fa fa-minus"></i></button>
-                  </div>
-                  <!-- /. tools -->
+                        <i class="fa fa-minus"></i></button>
+                    </div>
+                    <!-- /. tools -->
     
-                  <i class="fa fa-users" aria-hidden="true"></i>
+                    <i class="fa fa-users" aria-hidden="true"></i>
     
-                  <h3 class="box-title">
+                    <h3 class="box-title">
                     Project Members
-                  </h3>
+                    </h3>
                 </div>
                 <div class="box-body">
-                  <div id="world-map" style="width: 100%;">
+                    <div id="world-map" style="width: 100%;">
                     
                     <div class="add-project-member-area">
                         <input type="text" class="search-member form-control" selected-user-id="">
@@ -79,6 +86,7 @@
                 
                     <div style="display:none" class="member-item-field" user-id="" index="-1">
                         <div class="username-box">
+                            <img src=""  class="user-image small-avatar-icon" alt="User Image">                                                                                                                                          
                             <span class="username"></span>                       
                         </div>
                         <div class="access-box">
@@ -90,11 +98,12 @@
                         <a class="btn-remove-member">Remove</a>
                     </div>
 
-                  </div>
+                    </div>
                 </div>
                 <!-- /.box-body-->
-              </div>
+                </div>
 
         <button type="submit" class="btn btn-success">Create</button>
     </form>
+   
 {% endblock %}

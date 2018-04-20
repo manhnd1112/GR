@@ -1,6 +1,6 @@
 from .models import User, Project, ProjectMember, UserProfile
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 from django.contrib.auth.forms import AuthenticationForm
 
 
@@ -213,7 +213,7 @@ class EditProfileForm(forms.ModelForm):
         attrs={
             'class': 'form-control desc'
         }
-    ), required=False)
+    ), required=False, label='Bio')
     class Meta:
         model = UserProfile
 
@@ -226,3 +226,21 @@ class EditProfileForm(forms.ModelForm):
         labels = {
             'role': 'Work as'
         }
+
+class ChangePasswordForm(PasswordChangeForm):
+    old_password = forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'class': 'form-control'
+        } 
+    ), label="Old password")
+    new_password1 = forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'class': 'form-control'
+        } 
+    ), label="New password")
+
+    new_password2 = forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'class': 'form-control'
+        } 
+    ), label="New password confirmation")

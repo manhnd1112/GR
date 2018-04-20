@@ -1,6 +1,8 @@
 from django.db import models
 from enum import IntEnum
 from django.contrib.auth.models import User
+from django.templatetags.static import static
+from django.conf import settings
 from .utilies import *
 import json
 from django.db.models.signals import post_save
@@ -159,6 +161,7 @@ class ProjectMember(models.Model):
             member["id"] = member_q.id
             member["project_id"] = member_q.project.id 
             member["user_id"] = member_q.user.id 
+            member["avatar_url"] = Utils.get_avatar_url(member_q.user) 
             member["username"] = member_q.user.username 
             member["group_access"] = member_q.access 
             members.append(member)
@@ -170,3 +173,25 @@ class GroupAccess(IntEnum):
     ADMIN = 2
     OWNER = 3
     SUPERUSER = 4
+
+class Utils:
+    SERVER_BASE_URL = 'http://{}:{}/'.format(settings.SERVER_IP, settings.SERVER_PORT)
+    def get_avatar_url(user):
+        if not hasattr(user, 'userprofile'):
+            UserProfile.objects.create(user=user)
+        if user.userprofile.avatar and hasattr(user.userprofile.avatar, 'url'):
+            return  '{}{}'.format(Utils.SERVER_BASE_URL, user.userprofile.avatar.url)
+        else:
+            return static('assets/avatar_default.png')
+
+
+    def get_avatar_url_by_user_id(user_id):
+        user = get_or_none(User, pk=user_id)
+        if user is None:
+            return static('assets/avatar_default.png')        
+        if not hasattr(user, 'userprofile'):
+            UserProfile.objects.create(user=user)
+        if user.userprofile.avatar and hasattr(user.userprofile.avatar, 'url'):
+            return  '{}{}'.format(Utils.SERVER_BASE_URL, user.userprofile.avatar.url)
+        else:
+            return static('assets/avatar_default.png')

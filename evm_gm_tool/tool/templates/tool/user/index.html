@@ -1,5 +1,11 @@
 {% extends 'tool/layout/layout.html' %}
 {% block body %}
+    <section class="content-header">
+        <ol class="breadcrumb">
+            <li><a href="{% url 'tool:homepage' %}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Users</li>
+        </ol>
+    </section>
     {% load static %}
     <script src="{% static 'js/user.js' %}"></script>
     {% block header_title %}
@@ -14,16 +20,16 @@
                 ID
                 <i class="fa fa-sort pull-right" aria-hidden="true"></i>
             </th>
+            <th data-sort="string" class="text-center" id="avatar" type="custom">
+                Username
+                <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+            </th>
             <th data-sort="string" class="text-center" id="first_name" type="text">
                 First Name
                 <i class="fa fa-sort pull-right" aria-hidden="true"></i>
             </th>
             <th data-sort="string" class="text-center" id="last_name" type="text">
                 Last Name
-                <i class="fa fa-sort pull-right" aria-hidden="true"></i>
-            </th>
-            <th data-sort="string" class="text-center" id="avatar" type="custom">
-                Username
                 <i class="fa fa-sort pull-right" aria-hidden="true"></i>
             </th>
             <th class="text-center">Action</th>
@@ -36,11 +42,11 @@
                     <td class="text-center">{{ user.id }}</td>
                     <td class="text-center">
                         <a href="{% url 'tool:user_view' user.id %}">
-                            {{ user.first_name }}
-                        </a>
-                    </td>
+                        {{ user.username }}
+                        </a>                
+                    </td>                    
+                    <td class="text-center">{{ user.first_name }}</td>
                     <td class="text-center">{{ user.last_name }}</td>
-                    <td class="text-center">{{ user.username }}</td>
                     <td class="text-center">
                         <a href="{% url 'tool:user_view' user.id %}" class="text-red"><i class="fa fa-eye"></i></a>                            
                         <a href="{% url 'tool:user_edit' user.id %}" class="text-red"><i class="fa fa-edit"></i></a>

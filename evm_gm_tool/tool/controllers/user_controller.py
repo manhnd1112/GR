@@ -9,13 +9,14 @@ from django.core import serializers
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
+from django.conf import settings
 
 class UserController:
     def index(request):
         if not request.user.is_superuser:
             return redirect('tool:error_no_access')
         user_list = User.objects.all()
-        paginator = Paginator(user_list, 3) # Show 25 contacts per page
+        paginator = Paginator(user_list, settings.PAGE_LIMIT) # Show 25 contacts per page
 
         page = request.GET.get('page')
         users = paginator.get_page(page)

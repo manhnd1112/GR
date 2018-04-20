@@ -1,11 +1,106 @@
 $(document).ready(function(){
-    var BASE_SERVER_IP = 'http://127.0.0.1:8000'
     var project_status = []
+
+    function create_line_chart(ctx, data=[]) {
+        return new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    }
+
+    function update_chart(chart, project_status_data){
+        var data = {
+            labels: project_status_data['AT'],
+            datasets: [{
+                label: "PV",
+                fill: false,
+                lineTension: 0.1,
+                backgroundColor: "orange",
+                borderColor: "orange", // The main line color
+                borderCapStyle: 'square',
+                borderDash: [], // try [5, 15] for instance
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "black",
+                pointBackgroundColor: "white",
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "yellow",
+                pointHoverBorderColor: "brown",
+                pointHoverBorderWidth: 2,
+                pointRadius: 4,
+                pointHitRadius: 10,
+                // notice the gap in the data and the spanGaps: true
+                data: project_status_data['PV'],
+                spanGaps: true,
+              },
+              {
+                label: "EV",
+                fill: false,
+                lineTension: 0.1,
+                backgroundColor: "green",
+                borderColor: "green", // The main line color
+                borderCapStyle: 'square',
+                borderDash: [], // try [5, 15] for instance
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "black",
+                pointBackgroundColor: "white",
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "yellow",
+                pointHoverBorderColor: "brown",
+                pointHoverBorderWidth: 2,
+                pointRadius: 4,
+                pointHitRadius: 10,
+                // notice the gap in the data and the spanGaps: true
+                data: project_status_data['EV'],
+                spanGaps: true,
+              },
+              {
+                label: "AC",
+                fill: false,
+                lineTension: 0.1,
+                backgroundColor: "red",
+                borderColor: "red", // The main line color
+                borderCapStyle: 'square',
+                borderDash: [], // try [5, 15] for instance
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "black",
+                pointBackgroundColor: "white",
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "yellow",
+                pointHoverBorderColor: "brown",
+                pointHoverBorderWidth: 2,
+                pointRadius: 4,
+                pointHitRadius: 10,
+                // notice the gap in the data and the spanGaps: true
+                data: project_status_data['AC'],
+                spanGaps: true,
+              }
+            ]
+        };
+        chart.config.data = data
+        chart.update()
+    }
+
+    var ctx = document.getElementById("chart-pv-ev-ac").getContext('2d'); 
+    var line_chart = create_line_chart(ctx)
     function get_project_detail(){
         var selected_project_id = $('.project-select-box option:selected').val()
         $.ajax({
             type: 'GET',
-            url: `${BASE_SERVER_IP}/tool/ajax/get_project_detail`,
+            url: '/ajax/get_project_detail',
             data: {
                 'project_id': selected_project_id
             },
@@ -29,6 +124,20 @@ $(document).ready(function(){
                             status_tr_template_clone.find('.AC').html(project_status[i]["AC"])
                             $('.table-project-status').find('tbody').append($(status_tr_template_clone))
                         }
+                        line_chart_data = {};
+                        line_chart_data['AT'] = $.map(project_status, function(element, index){
+                            return project_status[index]['AT']
+                        })
+                        line_chart_data['PV'] = $.map(project_status, function(element, index){
+                            return project_status[index]['PV']
+                        })
+                        line_chart_data['EV'] = $.map(project_status, function(element, index){
+                            return project_status[index]['EV']
+                        })
+                        line_chart_data['AC'] = $.map(project_status, function(element, index){
+                            return project_status[index]['AC']
+                        })
+                        update_chart(line_chart, line_chart_data)
                     }
                 }
             }
@@ -57,7 +166,7 @@ $(document).ready(function(){
         console.log(algorithm)
         $.ajax({
             type: 'GET',
-            url: `${BASE_SERVER_IP}/tool/estimate/estimate`,
+            url: '/estimate/estimate',
             data: {
                 'project_id': selected_project_id,
                 'evaluation_point': evaluation_point,

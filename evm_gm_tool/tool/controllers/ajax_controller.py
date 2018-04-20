@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.admin import User
-from tool.models import Project as ProjectModel, ProjectMember, GroupAccess
+from tool.models import Project as ProjectModel, ProjectMember, GroupAccess, Utils
 from tool.forms import UserCreateForm, UserEditForm, ProjectCreationForm, ProjectEditForm
 from tool.utilies import *
 import xlrd, json
@@ -16,8 +16,19 @@ class AjaxController:
         print(keyword)
         # users = User.objects.filter(username__regex=r'^.*{}.*$'.format(keyword))
         users = User.objects.filter(username__icontains = keyword)
-        users_list = list(users.values_list('id', 'username'))    
-        return JsonResponse({'users': users_list})
+        # users_list = list(users.values_list('id', 'username'))
+        user_tuple_list = list(users.values_list('id', 'username'))
+        user_list = []
+        for user_tuple in user_tuple_list:
+            user = {}
+            user['id'] = user_tuple[0]
+            user['username'] = user_tuple[1]
+            user['avatar-url'] = Utils.get_avatar_url_by_user_id(user_tuple[0])
+            user_list.append(user)
+            print(user)    
+        print(user_list)
+        # print(user_tuple_list)
+        return JsonResponse({'users': user_list})
 
     def add_project_memger(request):
         if request.method == 'GET':

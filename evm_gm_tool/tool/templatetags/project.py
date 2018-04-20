@@ -9,6 +9,7 @@ def get_item(List, i):
 @register.filter
 def has_all_permission(user, project):
     group_access = Project.get_group_access(user.id, project.id)
+    print(group_access)
     if group_access == GroupAccess.SUPERUSER or group_access == GroupAccess.OWNER or group_access == GroupAccess.ADMIN:
         return True
     return False

@@ -2,11 +2,18 @@
 {% block title %}Project Detail{% endblock %}
 
 {% block content %}
+    <section class="content-header">
+        <ol class="breadcrumb">
+            <li><a href="{% url 'tool:homepage' %}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Project Detail</li>
+        </ol>
+    </section>
     {% block header_title %}
     <h1>Project Detail</h1>
     {% endblock %}
     {% load static %}
     {% load project %}
+    {% load common %}
     <script src="{% static 'js/project_view.js' %}"></script>
     
     <div class="project-view">
@@ -38,7 +45,11 @@
                 </tr>
                 <tr>
                     <td class="field-name">Owner</td>
-                    <td>{{project.owner.username}}</td>
+                    <td>
+                        <a href="{% url 'tool:user_profile_view' project.owner.id %}">                                    
+                            {{project.owner.username}}
+                        </a>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -82,8 +93,13 @@
                     <div class="member-item-field">
                         <div class="username-box">
                             <span class="id display-none"></span>                               
-                            <span class="user-id display-none"></span>                                                               
-                            <span class="username">{{member.username}}</span>                       
+                            <span class="user-id display-none"></span>  
+                            <img src="{{member.user_id|get_avatar_url_by_user_id}}"  class="user-image small-avatar-icon" alt="User Image">                                          
+                            <span class="username">
+                                <a href="{% url 'tool:user_profile_view' member.user_id %}">
+                                    {{member.username}}
+                                </a>
+                            </span>                       
                         </div>
                         <div class="access-box">
                             <span>{{ member.group_access|get_group_access_as_text }}</span>

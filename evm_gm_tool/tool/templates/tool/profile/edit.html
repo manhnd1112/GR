@@ -16,6 +16,14 @@
             <input type="file" name="avatar" id="id_avatar">
         </div>
         <div class="col-md-7">
+            <div class="form-group">
+                <label for="">First Name</label>
+                <input type="text" name="firstname" class="form-control" value="{{user.first_name}}">
+            </div>
+            <div class="form-group">
+                <label for="">Last Name</label>
+                <input type="text" name="lastname" class="form-control" value="{{user.last_name}}">
+            </div>
             {% for field in form %}
                 {% if field.name != 'avatar'%}
                     <div class="form-group">
@@ -30,6 +38,8 @@
                 {% endif %}
             {% endfor %}
             <button type="submit" class="btn btn-update btn-success">Update</button>
+            <a href="{% url 'tool:user_profile_view' request.user.id %}" class="btn btn-warning pull-right">View Profile</a>            
+            <a href="{% url 'tool:change_password'%}" class="btn btn-primary pull-right" style="margin-right:10px">Change Password</a>                        
         </div>
         
     </form>

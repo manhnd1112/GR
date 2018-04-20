@@ -34,10 +34,10 @@ class LoginRequireMiddleware:
             logout(request)
             return None
 
-        # if url_is_admin:
-        #     raise Http404
         if url_is_admin:
-            return None
+            return redirect('tool:homepage')
+        # if url_is_admin:
+        #     return None
         elif request.user.is_authenticated and url_is_exempt:
             print('Redirect to homepage')
             return redirect('tool:homepage')

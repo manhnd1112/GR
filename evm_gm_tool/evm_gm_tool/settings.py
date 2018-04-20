@@ -138,11 +138,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # LOGIN_URL = '/tool/login/'
-LOGOUT_URL = re.compile(r'^tool/logout$')
-LOGIN_REDIRECT_URL = '/tool/'
+LOGOUT_URL = re.compile(r'^/logout$')
+LOGIN_REDIRECT_URL = '/'
 
 LOGIN_EXEMPLT_URLS = (
-    re.compile(r'^tool/login/$'),
+    re.compile(r'^login/$'),
 )
 
 ADMIN_URL = re.compile(r'^admin')
@@ -152,3 +152,8 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 MEDIA_URL = 'media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
+
+SERVER_IP = '127.0.0.1'
+SERVER_PORT = '8000'
+
+PAGE_LIMIT = 5

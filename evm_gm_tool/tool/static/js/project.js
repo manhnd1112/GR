@@ -65,7 +65,7 @@ $(document).ready(function(){
             form_data.append('file', file)
             $.ajax({
                 type: 'POST',
-                url: `${BASE_SERVER_IP}/tool/common/upload_csv`,
+                url: '/common/upload_csv',
                 data: form_data,
                 contentType: false, 
                 processData: false,
@@ -76,6 +76,8 @@ $(document).ready(function(){
                     var EV_data = res.data[2];
                     var AC_data = res.data[3];
                     total_status_field = AT_data.length > 0? AT_data.length: 0;
+                    var pd = -1;
+                    var budget = PV_data[PV_data.length-1] 
                     for(let index= 0; index < AT_data.length; index++){
                         project_status[index] = {};
                         project_status[index]["AT"] = AT_data[index]
@@ -91,7 +93,11 @@ $(document).ready(function(){
                         )
                         add_status_field_listen_change(project_status_field_clone);        
                         $('.project-status').append($(project_status_field_clone));
+                        
+                        if(PV_data[index] == budget && pd == -1) pd = AT_data[index]
                     }
+                    $('input[name=budget]').val(budget)
+                    $('input[name=pd]').val(pd)
                     clean_project_status();
                 }
             })
@@ -225,7 +231,7 @@ $(document).ready(function(){
         var keyword = $(this).val();
         var id_owner = parseInt($('select#id_owner option:selected').val());
         $.ajax({
-            url: `${BASE_SERVER_IP}/tool/ajax/search_user`,
+            url: '/ajax/search_user',
             type: 'GET',
             data: {
                 'keyword': keyword
@@ -235,11 +241,12 @@ $(document).ready(function(){
                 var users = res.users;
                 $('.search-result').empty();
                 $.each(users, function(index, user){
-                    if(user[0] != id_owner) {
+                    if(user['id'] != id_owner) {
                         var search_result_member_item_field_clone = search_result_member_item_field.clone();
                         search_result_member_item_field_clone.css('display', 'block');
-                        search_result_member_item_field_clone.attr('user-id', user[0]);
-                        search_result_member_item_field_clone.html(user[1]);
+                        search_result_member_item_field_clone.attr('user-id', user['id']);
+                        search_result_member_item_field_clone.attr('avatar-url', user['avatar-url']);
+                        search_result_member_item_field_clone.html(user['username']);
                         add_search_result_field_listen_click(search_result_member_item_field_clone)
                         $('.search-result').append(search_result_member_item_field_clone);
                     }
@@ -250,6 +257,7 @@ $(document).ready(function(){
 
     $('.btn-add-project-member').click(function(){
         var selected_user_id = $('input.search-member').attr('selected-user-id'); 
+        var selected_user_avatar_url = $('input.search-member').attr('selected-user-avatar-url'); 
         if(is_project_member_already_added(selected_user_id)) {
             alert("Member already added as project member");
         } else {
@@ -263,7 +271,7 @@ $(document).ready(function(){
             var form_project_update = $('.form.project-update-form');
             if(form_project_update.length != 0) {
                 $.ajax({
-                    url: `${BASE_SERVER_IP}/tool/ajax/add_project_member`,
+                    url: '/ajax/add_project_member',
                     type: 'GET',
                     data: {
                         'project_id': project_id,
@@ -273,22 +281,23 @@ $(document).ready(function(){
                     dataType: 'json',
                     success: function(res){
                         if(res.status == 200) {
-                            add_member_field(selected_user_id, group_access, res.id)
+                            add_member_field(selected_user_id, group_access, res.id, selected_user_avatar_url)
                         } else {
                             alert(res.err)
                         }
                     }
                 })
             } else {
-                add_member_field(selected_user_id, group_access)
+                add_member_field(selected_user_id, group_access, '', selected_user_avatar_url)
             }
             
         }
     })
 
-    function add_member_field(selected_user_id, group_access, id=''){
+    function add_member_field(selected_user_id, group_access, id='', avatar_url = ''){
         project_members[total_member_field] = {}
         project_members[total_member_field]["id"] = id
+        project_members[total_member_field]["avatar-url"] = avatar_url
         project_members[total_member_field]["user-id"] = selected_user_id
         project_members[total_member_field]["username"] = $('input.search-member').val()            
         project_members[total_member_field]["group-access"] = group_access
@@ -296,6 +305,7 @@ $(document).ready(function(){
         member_item_field_clone.css('display', 'block')
         member_item_field_clone.attr('index', total_member_field);
         member_item_field_clone.find('.id').text(project_members[total_member_field]["id"]);
+        member_item_field_clone.find('.user-image').attr('src', project_members[total_member_field]["avatar-url"]);
         member_item_field_clone.find('.user-id').text(project_members[total_member_field]["user-id"]);
         member_item_field_clone.find('.username').text(project_members[total_member_field]["username"]);
         member_item_field_clone.find('.group-access').eq(project_members[total_member_field]["group-access"]).addClass('active')
@@ -310,6 +320,8 @@ $(document).ready(function(){
             $('ul.search-result').css('display', 'none');
             $('input.search-member').val($(this).text());
             $('input.search-member').attr('selected-user-id', $(this).attr('user-id'));
+            $('input.search-member').attr('selected-user-avatar-url', $(this).attr('avatar-url'));
+            console.log($('input.search-member'))
         })
     }
 
@@ -324,7 +336,7 @@ $(document).ready(function(){
             var form_project_update = $('.form.project-update-form');
             if(form_project_update.length != 0) {
                 $.ajax({
-                    url: `${BASE_SERVER_IP}/tool/ajax/update_group_access`,
+                    url: '/ajax/update_group_access',
                     type: 'GET',
                     data: {
                         'project_id': project_id,
@@ -362,7 +374,7 @@ $(document).ready(function(){
                 var form_project_update = $('.form.project-update-form');
                 if(form_project_update.length != 0) {
                     $.ajax({
-                        url: `${BASE_SERVER_IP}/tool/ajax/remove_member`,
+                        url: '/ajax/remove_member',
                         type: 'GET',
                         data: {
                             'project_id': project_id,
@@ -431,6 +443,7 @@ $(document).ready(function(){
                 member_item_field_clone.attr('index', index);
                 member_item_field_clone.find('.id').text(project_member["id"]);                
                 member_item_field_clone.find('.user-id').text(project_member["user_id"]);
+                member_item_field_clone.find('.user-image').attr('src', project_member["avatar_url"]);
                 member_item_field_clone.find('.username').text(project_member["username"]);
                 member_item_field_clone.find('.group-access').eq(project_member['group_access']).addClass('active')
                 add_member_field_listen(member_item_field_clone);        

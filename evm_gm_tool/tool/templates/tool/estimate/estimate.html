@@ -2,8 +2,8 @@
 {% load static %}
 <link rel="stylesheet"  type="text/css" href="{% static 'css/estimate.css' %}">
 <script src="{% static 'js/estimate.js' %}"></script>  
-<div>
-    <label for="">Choose Project</label>
+<div class="form-group">
+    <label style="font-weight:900; font-size:20px; margin: 0px 15px">Choose Project</label>
     <select class="project-select-box" id="">
         {% for project in projects %}
             <option value="{{ project.id }}" 
@@ -12,6 +12,21 @@
             </option>        
         {% endfor %}
     </select>
+    <div class="pull-right">
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#line-chart-modal">View Line Chart</button>
+            <div id="line-chart-modal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div style="height: 500px">
+                            <h3 class="text-center">Line Chart</h3>                        
+                            <canvas id="chart-pv-ev-ac" width="200" height="200"></canvas>
+                        </div><br><br>
+                    </div>
+                
+                </div>
+            </div>
+        </div>
 </div>
 <div class="estimate">
     <div class="col-md-3 sheet">
@@ -73,7 +88,7 @@
                     <input type="radio" name="grow-model" value="logistic" id="lm">Logistic Model                        
                     <input type="radio" name="grow-model" value="bass" id="bm">Bass Model                        
                     <input type="radio" name="grow-model" value="weibull" id="wm">Weibull Model                        
-                    <input type="radio" name="grow-model" value="log_logistic" id="llm">Log Logistic Model                        
+                    <!-- <input type="radio" name="grow-model" value="log_logistic" id="llm">Log Logistic Model                         -->
                 </div>
             </div>
             <br>

@@ -2,11 +2,18 @@
 {% block title %}Add project{% endblock %}
 
 {% block content %}
+    <section class="content-header">
+        <ol class="breadcrumb">
+            <li><a href="{% url 'tool:homepage' %}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Project Edit</li>
+        </ol>
+    </section>
     {% block header_title %}
     <h1>Edit Project Information</h1>
     {% endblock %}
     {% load static %}
     {% load project %}
+    {% load common %}
     <form action="" method="POST" class="form project-update-form">
         {% csrf_token %}
         {% for field in form %}
@@ -68,7 +75,7 @@
                   <div id="world-map" style="width: 100%;">
                     {% if request.user|has_all_permission:project %}
                     <div class="add-project-member-area">
-                        <input type="text" class="search-member form-control" selected-user-id="">
+                        <input type="text" class="search-member form-control" selected-user-id="" selected-user-avatar-url="">
                         <select name="" id="" class="select-box-group-access form-control">
                             <option value="0">Read</option>
                             <option value="1">Write</option>                    
@@ -82,13 +89,14 @@
                         
                     </div>
             
-                    <li style="display:none" class="search-result-member-item-field" user-id="">
+                    <li style="display:none" class="search-result-member-item-field" user-id="" avatar-url="">
                     </li>
                 
                     <div style="display:none" class="member-item-field" user-id="" index="-1">
                         <div class="username-box">
                             <span class="id display-none"></span>                               
-                            <span class="user-id display-none"></span>                                                               
+                            <span class="user-id display-none"></span> 
+                            <img src=""  class="user-image small-avatar-icon" alt="User Image">                                                                                                          
                             <span class="username"></span>                       
                         </div>
                         <div class="access-box">
@@ -103,7 +111,8 @@
                             <div class="member-item-field">
                                 <div class="username-box">
                                     <span class="id display-none"></span>                               
-                                    <span class="user-id display-none"></span>                                                               
+                                    <span class="user-id display-none"></span> 
+                                    <img src="{{member.user_id|get_avatar_url_by_user_id}}"  class="user-image small-avatar-icon" alt="User Image">                                                                              
                                     <span class="username">{{member.username}}</span>                       
                                 </div>
                                 <div class="access-box">

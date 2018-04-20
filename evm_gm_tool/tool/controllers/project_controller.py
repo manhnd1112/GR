@@ -9,11 +9,12 @@ from django.core import serializers
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
+from django.conf import settings
 
 class ProjectController:
     def index(request):
         project_list = ProjectModel.get_projects_has_access(request.user.id)
-        paginator = Paginator(project_list, 3) # Show 25 contacts per page
+        paginator = Paginator(project_list, settings.PAGE_LIMIT) # Show 25 contacts per page
         page = request.GET.get('page')
         projects = paginator.get_page(page)
         return render(request, 'tool/project/index.html', {'projects': projects})
@@ -61,7 +62,7 @@ class ProjectController:
 
         if request.method == "POST":
             form = ProjectEditForm(request.POST,instance=project)
-            args = {'form': form}
+            args = {'form': form, 'project': project}
             if form.is_valid():
                 form.save()
                 # if(request.POST.get('members') != ''):
@@ -71,7 +72,6 @@ class ProjectController:
                 args['members'] = members                    
                 return render(request, 'tool/project/edit.html', args)
             else:
-                print(ProjectMember.get_group_access(request.user.id, project_id))
                 args['errors'] = form.errors
                 return render(request, 'tool/project/edit.html', args)
         else: 
