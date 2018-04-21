@@ -6,6 +6,9 @@ from django.conf import settings
 from .utilies import *
 import json
 from django.db.models.signals import post_save
+from django.db.models import Q
+from operator import __or__ as OR, __and__ as AND
+from functools import reduce
 
 # Create your models here.
 class UserProfile(models.Model):
@@ -43,22 +46,72 @@ class Project(models.Model):
             return project_status[len(project_status) - 1]["AC"]
         return 0
 
-    def get_projects_has_access(user_id):
+    def get_projects_has_access(user_id, search_term=''):
+
+        # user = get_or_none(User, pk = user_id)
+        # if user is None:
+        #     return None
+        # projects = []
+        # if user.is_superuser:
+        #     for project in Project.objects.all():
+        #         projects.append(project)
+        #     return projects
+        # projects_as_onwer = Project.objects.filter(owner=user)
+        # project_members = ProjectMember.objects.filter(user=user)
+        # for project in projects_as_onwer:
+        #     projects.append(project)
+        
+        # for project_member in project_members:
+        #     projects.append(project_member.project)
+        # return projects
+
         user = get_or_none(User, pk = user_id)
         if user is None:
             return None
         projects = []
+
+        conditions = []
+        if search_term != '':
+            conditions.append(Q(name__icontains=search_term.lower()))
+            conditions.append(Q(owner__username__icontains=search_term.lower()))
+            if is_num(search_term):
+                conditions.append(Q(id=int(search_term)))
+        # print(conditions)
         if user.is_superuser:
-            for project in Project.objects.all():
+            if not conditions:
+                project_list = Project.objects.all()                          
+            else: 
+                project_list = Project.objects.filter(reduce(OR,conditions))
+
+            for project in project_list:
                 projects.append(project)
             return projects
-        projects_as_onwer = Project.objects.filter(owner=user)
-        project_members = ProjectMember.objects.filter(user=user)
+        
+        if not conditions:
+            projects_as_onwer = Project.objects.filter(owner=user)
+        else:     
+            projects_as_onwer = Project.objects.filter(reduce(
+                AND,
+                [
+                    reduce(OR,conditions),
+                    Q(owner=user)
+                ]
+            ))
+
         for project in projects_as_onwer:
             projects.append(project)
-        
+
+        project_members = ProjectMember.objects.filter(user=user)    
         for project_member in project_members:
-            projects.append(project_member.project)
+            project = project_member.project
+            if search_term:
+                if project.name.find(search_term) != -1:
+                    projects.append(project_member.project)
+                elif is_num(search_term) and project.id == int(search_term):
+                    projects.append(project_member.project)                    
+            else:
+                projects.append(project_member.project)
+
         return projects
 
     def get_group_access(user_id, project_id):
@@ -195,3 +248,11 @@ class Utils:
             return  '{}{}'.format(Utils.SERVER_BASE_URL, user.userprofile.avatar.url)
         else:
             return static('assets/avatar_default.png')
+
+    def search_by_id_or_username(classmodel, search_term):
+        conditions = []
+        conditions.append(Q(username__icontains=search_term.lower()))
+        if is_num(search_term):
+            conditions.append(Q(id=int(search_term)))
+        query_list = classmodel.objects.filter(reduce(OR,conditions))
+        return query_list

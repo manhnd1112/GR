@@ -1,7 +1,13 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.admin import User
-from tool.models import Project as ProjectModel, ProjectMember, GroupAccess, UserProfile
+from tool.models import (
+    Project as ProjectModel, 
+    ProjectMember, 
+    GroupAccess, 
+    UserProfile,
+    Utils
+)
 from tool.forms import UserCreateForm, UserEditForm, ProjectCreationForm, ProjectEditForm
 from tool.utilies import *
 import xlrd, json
@@ -15,12 +21,24 @@ class UserController:
     def index(request):
         if not request.user.is_superuser:
             return redirect('tool:error_no_access')
-        user_list = User.objects.all()
-        paginator = Paginator(user_list, settings.PAGE_LIMIT) # Show 25 contacts per page
+        args = {}
+        if(request.GET.get('search')):
+            search_term = request.GET.get('search')
+            args['search_term'] = search_term            
+            user_list = Utils.search_by_id_or_username(User, search_term)
+        else:
+            args['search_term'] = ''
+            user_list = User.objects.all()
+        if(request.GET.get('per-page')):
+            page_limit = int(request.GET.get('per-page'))
+        else:
+            page_limit =  settings.PAGE_LIMIT
+        paginator = Paginator(user_list, page_limit) # Show 25 contacts per page
 
         page = request.GET.get('page')
         users = paginator.get_page(page)
-        return render(request, 'tool/user/index.html', {'users': users})
+        args['users'] = users
+        return render(request, 'tool/user/index.html', args)
 
     def view(request, id):
         if not request.user.is_superuser:

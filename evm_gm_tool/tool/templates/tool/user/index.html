@@ -11,73 +11,85 @@
     {% block header_title %}
         <h1>User Management Dashboard</h1>
     {% endblock %}
-    
-    <a href="{% url 'tool:user_add' %}" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> New User</a>    
-    <table class="user-list table table-bordered table-striped" id='crud-table'>
-        <thead>
-          <tr>
-            <th data-sort="int" data-sort-default="asc" class="text-center" id="id" type="text" prime="true" static="true">
-                ID
-                <i class="fa fa-sort pull-right" aria-hidden="true"></i>
-            </th>
-            <th data-sort="string" class="text-center" id="avatar" type="custom">
-                Username
-                <i class="fa fa-sort pull-right" aria-hidden="true"></i>
-            </th>
-            <th data-sort="string" class="text-center" id="first_name" type="text">
-                First Name
-                <i class="fa fa-sort pull-right" aria-hidden="true"></i>
-            </th>
-            <th data-sort="string" class="text-center" id="last_name" type="text">
-                Last Name
-                <i class="fa fa-sort pull-right" aria-hidden="true"></i>
-            </th>
-            <th class="text-center">Action</th>
-          </tr>
-        </thead>
-              
-        <tbody>
-            {% for user in users %}
-                <tr>
-                    <td class="text-center">{{ user.id }}</td>
-                    <td class="text-center">
-                        <a href="{% url 'tool:user_view' user.id %}">
-                        {{ user.username }}
-                        </a>                
-                    </td>                    
-                    <td class="text-center">{{ user.first_name }}</td>
-                    <td class="text-center">{{ user.last_name }}</td>
-                    <td class="text-center">
-                        <a href="{% url 'tool:user_view' user.id %}" class="text-red"><i class="fa fa-eye"></i></a>                            
-                        <a href="{% url 'tool:user_edit' user.id %}" class="text-red"><i class="fa fa-edit"></i></a>
-                        <a href="{% url 'tool:user_delete' user.id %}" class="text-red icon-delete"><i class="fa fa-trash-o"></i></a>
-                    </td>
-                </tr>
-            {% endfor %}
-           
-        </tbody>
-        
-    </table>
+    <div>
+        <a href="{% url 'tool:user_add' %}" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> New User</a>    
+        <div class="col-md-5 pull-right">
+            {% include 'tool/common/search_bar.html' with place_holder='Search by id or username' value=search_term %}     
+        </div>    
+    </div><br>
 
-    {% if users.has_other_pages %}
-    <ul class="pagination">
-      {% if users.has_previous %}
-        <li><a href="?page={{ users.previous_page_number }}">&laquo;</a></li>
-      {% else %}
-        <li class="disabled"><span>&laquo;</span></li>
-      {% endif %}
-      {% for i in users.paginator.page_range %}
-        {% if users.number == i %}
-          <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+    {% if not users %}
+        <h2>No results found.</h2>
+    {% else %}
+        {% include 'tool/common/num_record_per_page.html' with per_page=users.paginator.per_page %}                 
+        <table class="user-list table table-bordered table-striped" id='crud-table'>
+            <thead>
+            <tr>
+                <th data-sort="int" data-sort-default="asc" class="text-center" id="id" type="text" prime="true" static="true">
+                    ID
+                    <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+                </th>
+                <th data-sort="string" class="text-center" id="avatar" type="custom">
+                    Username
+                    <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+                </th>
+                <th data-sort="string" class="text-center" id="first_name" type="text">
+                    First Name
+                    <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+                </th>
+                <th data-sort="string" class="text-center" id="last_name" type="text">
+                    Last Name
+                    <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+                </th>
+                <th class="text-center">Action</th>
+            </tr>
+            </thead>
+                
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td class="text-center">{{ user.id }}</td>
+                        <td class="text-center">
+                            <a href="{% url 'tool:user_view' user.id %}">
+                            {{ user.username }}
+                            </a>                
+                        </td>                    
+                        <td class="text-center">{{ user.first_name }}</td>
+                        <td class="text-center">{{ user.last_name }}</td>
+                        <td class="text-center">
+                            <a href="{% url 'tool:user_view' user.id %}" class="text-red"><i class="fa fa-eye"></i></a>                            
+                            <a href="{% url 'tool:user_edit' user.id %}" class="text-red"><i class="fa fa-edit"></i></a>
+                            <a href="{% url 'tool:user_delete' user.id %}" class="text-red icon-delete"><i class="fa fa-trash-o"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            
+            </tbody>
+            
+        </table>
+
+        {% if users.has_other_pages %}
+        <ul class="pagination">
+        {% if users.has_previous %}
+            <li><a href="?page={{ users.previous_page_number }}">&laquo;</a></li>
         {% else %}
-          <li><a href="?page={{ i }}">{{ i }}</a></li>
+            <li class="disabled"><span>&laquo;</span></li>
         {% endif %}
-      {% endfor %}
-      {% if users.has_next %}
-        <li><a href="?page={{ users.next_page_number }}">&raquo;</a></li>
-      {% else %}
-        <li class="disabled"><span>&raquo;</span></li>
-      {% endif %}
-    </ul>
+        {% for i in users.paginator.page_range %}
+            {% if users.number == i %}
+            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+            {% else %}
+            <li><a href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if users.has_next %}
+            <li><a href="?page={{ users.next_page_number }}">&raquo;</a></li>
+        {% else %}
+            <li class="disabled"><span>&raquo;</span></li>
+        {% endif %}
+        </ul>
+        {% endif %}
     {% endif %}
+
+    
 {% endblock %}

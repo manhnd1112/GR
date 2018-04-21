@@ -156,10 +156,10 @@ $(document).ready(function(){
     function update_project_status(element){
         status_field_index = $(element).attr('index');
         var status_field = {};
-        status_field['AT'] = $(element).find('.AT').val();
-        status_field['PV'] = $(element).find('.PV').val();
-        status_field['EV'] = $(element).find('.EV').val();
-        status_field['AC'] = $(element).find('.AC').val();
+        status_field['AT'] = parseFloat($(element).find('.AT').val());
+        status_field['PV'] = parseFloat($(element).find('.PV').val());
+        status_field['EV'] = parseFloat($(element).find('.EV').val());
+        status_field['AC'] = parseFloat($(element).find('.AC').val());
         project_status[status_field_index] = status_field;
         
         clean_project_status();

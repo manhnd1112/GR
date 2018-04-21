@@ -1,7 +1,13 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.admin import User
-from tool.models import Project as ProjectModel, ProjectMember, GroupAccess
+from tool.models import(
+    Project as ProjectModel, 
+    ProjectMember, 
+    GroupAccess, 
+    UserProfile,
+    Utils
+)
 from tool.forms import UserCreateForm, UserEditForm, ProjectCreationForm, ProjectEditForm, ProjectViewForm
 from tool.utilies import *
 import xlrd, json
@@ -13,11 +19,25 @@ from django.conf import settings
 
 class ProjectController:
     def index(request):
-        project_list = ProjectModel.get_projects_has_access(request.user.id)
-        paginator = Paginator(project_list, settings.PAGE_LIMIT) # Show 25 contacts per page
+        args = {}
+        if(request.GET.get('search')):
+            search_term = request.GET.get('search')
+            args['search_term'] = search_term            
+            project_list = ProjectModel.get_projects_has_access(request.user.id,search_term)            
+        else:
+            args['search_term'] = ''
+            project_list = ProjectModel.get_projects_has_access(request.user.id)
+        if(request.GET.get('per-page')):
+            page_limit = int(request.GET.get('per-page'))
+        else:
+            page_limit =  settings.PAGE_LIMIT
+
+        paginator = Paginator(project_list, page_limit) # Show 25 contacts per page
         page = request.GET.get('page')
+
         projects = paginator.get_page(page)
-        return render(request, 'tool/project/index.html', {'projects': projects})
+        args['projects'] = projects
+        return render(request, 'tool/project/index.html', args)
 
     def create(request):
         if not request.user.is_superuser:

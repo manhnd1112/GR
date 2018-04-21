@@ -9,6 +9,7 @@
         </ol>
     </section>
     <br>
+    {% include 'tool/common/errors.html' with form=form%}    
     <form action="" method="POST" class="form project-creation-form">
         {% csrf_token %}
         {% for field in form %}
@@ -25,8 +26,8 @@
 
         <input type="file" class="file-input-data" accept=".xls, .xlsx, .csv, text/csv">
         <div class="project-status-actions" id="project-status-actions">
-                <a class="btn btn-default btn-add-project-status">Add project status</a>                
-                <a class="btn btn-default btn-import-project-status-from-csv">Import project status from file csv</a>
+                <a class="btn btn-primary btn-add-project-status">Add project status</a>                
+                <a class="btn btn-warning btn-import-project-status-from-csv">Import project status from file csv</a>
         </div>
         <br>
         <div class="project-status">

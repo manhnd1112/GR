@@ -220,12 +220,12 @@ class Funcs:
         parametersEstimated = Funcs.optimizeLeastSquares(grow_model, xdata, ydata, method=algorithm)
         EAC_GM1 = Funcs.getEACGM(project_status, xdata, evaluation_index, grow_model, parametersEstimated, budget, 1.0)
         EAC_GM2 = Funcs.getEACGM(project_status, xdata, evaluation_index, grow_model, parametersEstimated, budget, 1.0/SPIt)
-        alpha = parametersEstimated[0]
-        beta = parametersEstimated[1]
+        alpha = round(parametersEstimated[0], 6)
+        beta = round(parametersEstimated[1], 6)
         if(grow_model == 'log_logistic'):
             gamma = ''
         else:
-            gamma = parametersEstimated[2]
+            gamma = round(parametersEstimated[2], 6)
 
         data = {
             'alpha': alpha,
@@ -300,16 +300,16 @@ class Funcs:
             sum_pe[8] += abs(data_pe['{}'.format(project_id)]['pe_EAC_GM1'])
             sum_pe[9] += abs(data_pe['{}'.format(project_id)]['pe_EAC_GM2'])
         return {
-            'mape_EAC1': sum_pe[0]/len(project_ids),
-            'mape_EAC2': sum_pe[1]/len(project_ids),
-            'mape_EAC3_SPI': sum_pe[2]/len(project_ids),
-            'mape_EAC3_SPIt': sum_pe[3]/len(project_ids),
-            'mape_EAC4_SCI': sum_pe[4]/len(project_ids),
-            'mape_EAC4_SCIt': sum_pe[5]/len(project_ids),
-            'mape_EAC5_CI': sum_pe[6]/len(project_ids),
-            'mape_EAC5_CIt': sum_pe[7]/len(project_ids),
-            'mape_EAC_GM1': sum_pe[8]/len(project_ids),
-            'mape_EAC_GM2': sum_pe[9]/len(project_ids)
+            'mape_EAC1': round(sum_pe[0]/len(project_ids), 2),
+            'mape_EAC2': round(sum_pe[1]/len(project_ids), 2),
+            'mape_EAC3_SPI': round(sum_pe[2]/len(project_ids), 2),
+            'mape_EAC3_SPIt': round(sum_pe[3]/len(project_ids), 2),
+            'mape_EAC4_SCI': round(sum_pe[4]/len(project_ids), 2),
+            'mape_EAC4_SCIt': round(sum_pe[5]/len(project_ids), 2),
+            'mape_EAC5_CI': round(sum_pe[6]/len(project_ids), 2),
+            'mape_EAC5_CIt': round(sum_pe[7]/len(project_ids), 2),
+            'mape_EAC_GM1': round(sum_pe[8]/len(project_ids), 2),
+            'mape_EAC_GM2': round(sum_pe[9]/len(project_ids), 2)
         }
 
 class MyIO:
@@ -355,6 +355,7 @@ class PeController:
         project_ac = project.get_ac()
         evaluation_percents = [0.25, 0.5, 0.75]
         grow_models = ['gompertz', 'logistic', 'bass', 'weibull']
+        # grow_models = ['gompertz', 'logistic', 'weibull', 'bass', 'log_logistic']        
         data = {}
         for grow_model in grow_models:    
             data['{}'.format(grow_model)] = {}                    
@@ -368,6 +369,7 @@ class PeController:
         project_ids = json.loads(project_ids_str)
         evaluation_percents = [0.25, 0.5, 0.75]
         grow_models = ['gompertz', 'logistic', 'weibull', 'bass']
+        # grow_models = ['gompertz', 'logistic', 'weibull', 'bass', 'log_logistic']
         data = {}
         for grow_model in grow_models:    
             data['{}'.format(grow_model)] = {}                    

@@ -23,16 +23,22 @@ $(document).ready(function(){
     var ctx_logistic = document.getElementById("chartLogistic").getContext('2d');    
     var ctx_weibull = document.getElementById("chartWeibull").getContext('2d');    
     var ctx_bass = document.getElementById("chartBass").getContext('2d');    
+    // var ctx_log_logistic = document.getElementById("chartLogLogistic").getContext('2d');    
 
     var chart_gomperzt = create_bar_chart(ctx)
     var chart_logistic = create_bar_chart(ctx_logistic)
     var chart_weibull = create_bar_chart(ctx_weibull)    
     var chart_bass = create_bar_chart(ctx_bass)
+    // var chart_log_logistic = create_bar_chart(ctx_log_logistic)
+    function round_to_two(number) {
+        return Math.round(number * 100)/100
+    }
 
     function get_mape(){
         var selected_project_id = $('.mape-project-select-box option:selected').val()
         var how_show_pe = $('input[name=how-show-pe]:checked').val()
         var grow_models = ['gompertz', 'logistic', 'weibull', 'bass']
+        // var grow_models = ['gompertz', 'logistic', 'weibull', 'bass', 'log_logistic']
         var pe_eacs = ['pe_EAC1', 'pe_EAC2', 'pe_EAC3_SPI', 'pe_EAC3_SPIt', 'pe_EAC4_SCI', 'pe_EAC4_SCIt', 'pe_EAC5_CI', 'pe_EAC5_CIt', 'pe_EAC_GM1', 'pe_EAC_GM2']
         if(selected_project_id == 'all'){
             project_option_fields = $('.mape-project-select-box option[value!="all"]');
@@ -57,7 +63,7 @@ $(document).ready(function(){
                         for(let j = 0; j < pe_eacs.length; j++) {
                             pe_eac = pe_eacs[j]
                             if(how_show_pe == 'all-time') {
-                                data[`${grow_model}`][`${pe_eac}`] = [(Math.abs(grow_model_data['0.25'][`ma${pe_eac}`])+Math.abs(grow_model_data['0.5'][`ma${pe_eac}`])+Math.abs(grow_model_data['0.75'][`ma${pe_eac}`]))/3]                                                                            
+                                data[`${grow_model}`][`${pe_eac}`] = [round_to_two((Math.abs(grow_model_data['0.25'][`ma${pe_eac}`])+Math.abs(grow_model_data['0.5'][`ma${pe_eac}`])+Math.abs(grow_model_data['0.75'][`ma${pe_eac}`]))/3)]                                                                            
                             } else {
                                 data[`${grow_model}`][`${pe_eac}`] = [grow_model_data['0.25'][`ma${pe_eac}`],grow_model_data['0.5'][`ma${pe_eac}`],grow_model_data['0.75'][`ma${pe_eac}`]]                                                                            
                             }
@@ -78,6 +84,7 @@ $(document).ready(function(){
                     received_data = res.data;
                     data= {};
                     var grow_models = ['gompertz', 'logistic', 'weibull', 'bass']
+                    // var grow_models = ['gompertz', 'logistic', 'weibull', 'bass', 'log_logistic']
                     for(let i = 0; i < grow_models.length; i++) {
                         let grow_model = grow_models[i]
                         grow_model_data = res.data[`${grow_model}`]                
@@ -85,7 +92,7 @@ $(document).ready(function(){
                         for(let j = 0; j < pe_eacs.length; j++) {
                             pe_eac = pe_eacs[j]
                             if(how_show_pe == 'all-time') {
-                                data[`${grow_model}`][`${pe_eac}`] = [(Math.abs(grow_model_data['0.25'][`${pe_eac}`])+Math.abs(grow_model_data['0.5'][`${pe_eac}`])+Math.abs(grow_model_data['0.75'][`${pe_eac}`]))/3]                                            
+                                data[`${grow_model}`][`${pe_eac}`] = [round_to_two((Math.abs(grow_model_data['0.25'][`${pe_eac}`])+Math.abs(grow_model_data['0.5'][`${pe_eac}`])+Math.abs(grow_model_data['0.75'][`${pe_eac}`]))/3)]                                            
                             } else {
                                 data[`${grow_model}`][`${pe_eac}`] = [grow_model_data['0.25'][`${pe_eac}`],grow_model_data['0.5'][`${pe_eac}`],grow_model_data['0.75'][`${pe_eac}`]]                                                                            
                             }
@@ -301,6 +308,9 @@ $(document).ready(function(){
             chart_bass.config.data = data;
             chart_bass.update();
         }
-        
+        // else if (grow_model == 'log_logistic') {
+        //     chart_log_logistic.config.data = data;
+        //     chart_log_logistic.update();
+        // }
     }
 })
