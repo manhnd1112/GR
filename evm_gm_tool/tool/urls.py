@@ -1,7 +1,8 @@
 from django.urls import path
 from . import views
 from .forms import CustomAuthForm
-from django.contrib.auth.views import login, logout
+# from django.contrib.auth.views import login, logout
+from django.contrib.auth.views import LoginView, LogoutView
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -10,8 +11,10 @@ urlpatterns = [
     path("", views.Dashboard.index, name="homepage"),   
     path("error/no_access", views.Dashboard.error_no_access, name="error_no_access"),   
     path("page_not_found", views.Dashboard.page_not_found, name="page_not_found"),   
-    path("login/", login, {'template_name': 'tool/auth/login.html', 'authentication_form': CustomAuthForm}, name='login'),
-    path("logout/", logout, {'template_name': 'tool/auth/logout.html'}, name='logout'),
+    # path("login/", login, {'template_name': 'tool/auth/login.html', 'authentication_form': CustomAuthForm}, name='login'),
+    path("login/", LoginView.as_view(template_name='tool/auth/login.html', authentication_form=CustomAuthForm), name='login'),
+    # path("logout/", logout, {'template_name': 'tool/auth/logout.html'}, name='logout'),
+    path("logout/", LogoutView.as_view(template_name='tool/auth/logout.html'), name='logout'),
     path("users/", views.UserController.index, name="user_index"),
     path("user/view/<id>", views.UserController.view, name="user_view"),        
     path("user/add/", views.UserController.create, name="user_add"),
