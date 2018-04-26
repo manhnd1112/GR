@@ -18,3 +18,4 @@ build/
 tests/report/
 .vscode/
 .idea/
+evm_gm_tool/static/media/

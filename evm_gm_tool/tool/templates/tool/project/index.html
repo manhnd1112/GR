@@ -1,0 +1,107 @@
+{% extends 'tool/project/base.html' %}
+
+<h1>Projects</h1>
+{% block content %}
+    <section class="content-header">
+        <ol class="breadcrumb">
+            <li><a href="{% url 'tool:homepage' %}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Projects</li>
+        </ol>
+    </section>
+{% load static %}
+{% load project %}
+<h1>Project Management Dashboard</h1>
+
+<div>
+    {% if request.user.is_superuser %}
+        <a href="{% url 'tool:project_create' %}" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> New Project</a>
+    {% endif %}
+    <div class="col-md-5 pull-right">
+        {% include 'tool/common/search_bar.html' with place_holder='Search by id or project name or owner' value=search_term %}     
+    </div>    
+</div><br>
+{% if not projects %}
+    <h2>No results found.</h2>
+{% else %}
+    {% include 'tool/common/num_record_per_page.html' with per_page=projects.paginator.per_page %}               
+    <table class="table table-bordered table-striped project-list" id='crud-table'>
+        <thead>
+        <tr>
+            <th data-sort="int" data-sort-default="asc" class="text-center" id="id" type="text" prime="true" static="true">
+                ID
+                <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+            </th>
+            <th data-sort="string" class="text-center" id="name" type="text">
+                Project Name
+                <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+            </th>
+            <th data-sort="float" class="text-center" id="budget" type="text">
+                Budget
+                <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+            </th>
+            <th data-sort="float" class="text-center" id="duration" type="text">
+                Project Duration
+                <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+            </th>
+            <th data-sort="string" class="text-center" id="duration" type="text">
+                Owner
+                <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+            </th>
+            <th class="text-center">
+                Action
+                <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+            </th>
+        </tr>
+        </thead>
+            
+        <tbody>
+            {% for project in projects %}
+            
+                <tr>
+                    <td class="text-center">{{ project.id }}</td>
+                    <td class="text-center"><a href="{% url 'tool:project_view' project.id %}">{{ project.name }}</a></td>
+                    <td class="text-center">{{ project.budget }}</td>
+                    <td class="text-center">{{ project.pd }}</td>
+                    <td class="text-center">{{ project.owner.username }}</td>
+                    <td class="text-center">
+                        <a href="{% url 'tool:project_view' project.id %}" class="text-red"><i class="fa fa-eye"></i></a>
+                        {% if request.user|has_write_permission:project %}
+                        <a href="{% url 'tool:project_edit' project.id %}" class="text-red"><i class="fa fa-edit"></i></a>                    
+                        {% endif %}
+                        {% if request.user|has_all_permission:project %}
+                        <a href="{% url 'tool:project_delete' project.id %}" class="text-red icon-delete"><i class="fa fa-trash-o"></i></a>                    
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        
+        </tbody>
+        
+    </table>
+    
+
+    {% if projects.has_other_pages %}
+    <ul class="pagination">
+    {% if projects.has_previous %}
+        <li><a href="?page={{ projects.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+        <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in projects.paginator.page_range %}
+        {% if projects.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+        {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+    {% endfor %}
+    {% if projects.has_next %}
+        <li><a href="?page={{ projects.next_page_number }}">&raquo;</a></li>
+    {% else %}
+        <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+    </ul>
+    {% endif %}
+{% endif %}
+
+
+{% endblock %}

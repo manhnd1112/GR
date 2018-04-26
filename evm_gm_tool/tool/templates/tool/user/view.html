@@ -1,0 +1,51 @@
+{% extends 'tool/layout/layout.html' %}
+
+{% block body %}
+<section class="content-header">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'tool:homepage' %}"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">User Detail</li>
+    </ol>
+</section>
+{% load static %}
+<script src="{% static 'js/user.js' %}"></script>
+<div class="user-view">
+    {% block header_title %}
+        <h1>User Detail</h1>
+    {% endblock %}
+    {% if request.user.is_superuser %}
+    <div>
+        <a href="{% url 'tool:user_edit' user.id %}" class="btn btn-primary">Edit</a>
+        <a href="{% url 'tool:user_delete' user.id %}" class="btn btn-danger btn-delete-user">Delete</a>
+    </div><br>
+    {% endif %}
+    <table class="table table-bordered table-user-detail custom-table-border">
+        <tbody>
+            <tr>
+                <td class="field-name">Email</td>
+                <td>{{user.email}}</td>
+            </tr>
+            <tr>
+                <td class="field-name">Username</td>
+                <td>{{user.username}}</td>
+            </tr>
+            <tr>
+                <td class="field-name">First Name</td>
+                <td>{{user.first_name}}</td>
+            </tr>
+            <tr>
+                <td class="field-name">Last Name</td>
+                <td>{{user.last_name}}</td>
+            </tr>
+            <tr>
+                <td class="field-name">Is Super User</td>
+                <td>{% if user.is_superuser %}Yes{% else %}No{% endif %}</td>
+            </tr>
+            <tr>
+                <td class="field-name">Is Active</td>
+                <td>{% if user.is_active %}Yes{% else %}No{% endif %}</td>
+            </tr>    
+        </tbody>
+    </table>
+</div>
+{% endblock %}

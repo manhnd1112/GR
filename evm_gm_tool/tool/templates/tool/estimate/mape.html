@@ -1,0 +1,37 @@
+{% load static %}
+<link rel="stylesheet"  type="text/css" href="{% static 'css/estimate.css' %}">
+<script src="{% static 'js/mape.js' %}"></script>  
+<div>
+    <label for="">Choose Project</label>
+       <select class="mape-project-select-box">
+        <option value="all">All project</option>
+        {% for project in projects %}
+            <option value="{{ project.id }}" 
+                selected="{% if forloop.counter0 == 0 %} selected {% endif %}">
+                {{ project.name }}
+            </option>        
+        {% endfor %}
+    </select>
+    <input type="radio" value="by-phase" name="how-show-pe" checked> By Phase    
+    <input type="radio" value="all-time" name="how-show-pe"> All Time
+    <div style="height: 500px; margin-bottom: 50px">
+        <h3 class="text-center">Gomperzt</h3>            
+        <canvas id="myChart" width="200" height="200"></canvas>
+    </div>
+    <div style="height: 500px">
+        <h3 class="text-center">Logistic</h3>                        
+        <canvas id="chartLogistic" width="200" height="200"></canvas>
+    </div><br><br>
+    <div style="height: 500px">
+        <h3 class="text-center">Bass</h3>            
+        <canvas id="chartWeibull" width="200" height="200"></canvas>
+    </div><br><br>
+    <div style="height: 500px">
+        <h3 class="text-center">Weibull</h3>                        
+        <canvas id="chartBass" width="200" height="200"></canvas>
+    </div>
+    <!-- <div style="height: 500px">
+        <h3 class="text-center">Log Logistic</h3>                        
+        <canvas id="chartLogLogistic" width="200" height="200"></canvas>
+    </div> -->
+</div>

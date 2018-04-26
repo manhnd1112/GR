@@ -1,0 +1,147 @@
+input.file-input-data{
+    display: none
+}
+
+textarea[name=status]{
+    display: none;
+}
+
+li.member-item-field:hover{
+    background: #F4F4F7;
+}
+
+.group-access {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid darkblue;
+    transition: all 0.5s ease;
+    cursor: pointer;
+}
+
+.group-access:hover {
+    background: darkblue;
+    color: white!important;
+}
+
+.group-access.active {
+    background: darkblue;
+    color: white;
+    border: none;
+}
+
+.project-creation-form label,
+.project-update-form label
+{
+    min-width: 150px;
+}
+.project-creation-form button,
+.project-update-form button {
+    margin-left: 150px;
+    padding: 6px 30px;
+}
+
+.project-creation-form .form-control,
+.project-update-form .form-control
+{
+    width: 50%;
+    display: inline-block;
+}
+
+.project-update-form .form-control{
+    width: 50%;
+    display: inline-block;
+}
+
+.project-status-actions {
+
+}
+
+.project-status-field, .project-status-actions{
+    margin-left: 150px;
+}
+
+.project-status .label-header {
+    margin-left: 150px;
+}
+
+.project-status .label-header label{
+    width: 20%;
+}
+
+.project-status-field .form-control{
+    width: 20%!important;
+}
+
+.add-project-member-box {
+    margin-top: 50px;
+    background-color: #e5dbdc;
+}
+
+.project-creation-form .add-project-member-box, 
+.project-update-form .add-project-member-box {
+    margin-left: 150px;    
+    width: calc(100% - 200px)    
+}
+
+.add-project-member-area .search-member,
+.add-project-member-area .select-box-group-access {
+    display: inline-block!important;
+    width: 50%;
+}
+
+.add-project-member-area .select-box-group-access {
+    width: 25%;
+}
+
+ul.search-result {
+    position: absolute;
+    z-index: 1000;
+    padding-left: 0px;
+    background-color: #fff;
+    width: 50%;
+    box-shadow: 0px 1px 2px grey;
+}
+
+.project-members {
+    margin-top: 15px;
+}
+
+.search-result-member-item-field {
+    padding: 5px 10px;
+}
+
+.search-result-member-item-field:hover{
+    background-color: #EDEDEE;
+}
+
+.member-item-field {
+    padding: 5px;
+    border-bottom: 1px solid #afafaf;
+}
+
+.member-item-field .username-box,
+.member-item-field .access-box {
+    display: inline-block!important;
+}
+
+.member-item-field .username-box {
+    width: 50%;
+    padding: 5px 15px;
+}
+
+.member-item-field .access-box {
+    width: 25%;
+}
+
+.btn-remove-member {
+    cursor: pointer
+}
+
+.btn-sm {
+    min-width: 30px!important;
+}
+
+.table-project-detail td.field-name {
+    font-weight: bold!important;
+    width: 20%;    
+}

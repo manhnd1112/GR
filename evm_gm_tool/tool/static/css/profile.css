@@ -1,0 +1,17 @@
+ul.role-list {
+    position: absolute;
+    z-index: 1000;
+    padding-left: 0px;
+    background-color: #fff;
+    width: 50%;
+    box-shadow: 0px 1px 2px grey;
+    list-style: none
+}
+
+.role-field {
+    padding: 5px 10px;
+}
+
+.role-field:hover{
+    background-color: #EDEDEE;
+}

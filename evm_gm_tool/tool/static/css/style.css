@@ -1,0 +1,33 @@
+.alert {
+    width: 80%;
+    color: #000000!important;
+    background-image: none;
+}
+
+.display-none {
+    display: none!important;
+}
+
+button {
+    min-width: 150px;
+}
+
+.custom-table-border tr td {
+    border: 1px solid #b2b2b2!important;
+}
+
+.user-panel>.image>img {
+    height: 45px!important;
+}
+
+.small-avatar-icon {
+    float: left;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.change-password-form .form-control {
+    width: 30%;
+}
