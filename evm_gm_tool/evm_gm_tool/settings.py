@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 """
 
 import os, re
-
+from .env import *
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -24,16 +24,12 @@ SECRET_KEY = 'w_d9xqu97$8mj0aw1npo%yl@x-r357$_@%&kw4*8w8(bj6cd8w'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ENV_ALLOWED_HOSTS
 
 
 # Application definition
 
-INSTALLED_APPS = [
-    # The general purpose templates
-    'django_adminlte',
-    # Optional: Skin for the admin interface
-    'django_adminlte_theme',    
+INSTALLED_APPS = [ 
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -90,10 +86,10 @@ WSGI_APPLICATION = 'evm_gm_tool.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'gr',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',
+        'NAME': ENV_DB_DATABASE,
+        'USER': ENV_DB_USERNAME,
+        'PASSWORD': ENV_DB_PASSWORD,
+        'HOST': ENV_DB_HOST,
         'PORT': '3306'
     }
 }
