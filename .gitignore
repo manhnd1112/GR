@@ -8,7 +8,7 @@
 .tox/
 __pycache__
 MANIFEST
-dist/
+/dist/
 docs/_build/
 docs/locale/
 node_modules/
@@ -19,3 +19,6 @@ tests/report/
 .vscode/
 .idea/
 evm_gm_tool/static/media/
+evm_gm_tool/evm_gm_tool/env.py
+evm_gm_tool/access.log
+evm_gm_tool/error.log
