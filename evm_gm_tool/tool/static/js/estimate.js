@@ -205,6 +205,7 @@ $(document).ready(function(){
                     $('#EAC5-CIt').text(res.data.EAC5_CIt)                                                                        
                     $('#EAC-GM1').text(res.data.EAC_GM1)                                                                        
                     $('#EAC-GM2').text(res.data.EAC_GM2)
+                    $('#EAC-GM3').text(res.data.EAC_GM3)
                 } else {
                     alert(res.err)
                 }
