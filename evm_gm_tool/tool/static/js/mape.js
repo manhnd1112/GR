@@ -39,7 +39,7 @@ $(document).ready(function(){
         var how_show_pe = $('input[name=how-show-pe]:checked').val()
         var grow_models = ['gompertz', 'logistic', 'weibull', 'bass']
         // var grow_models = ['gompertz', 'logistic', 'weibull', 'bass', 'log_logistic']
-        var pe_eacs = ['pe_EAC1', 'pe_EAC2', 'pe_EAC3_SPI', 'pe_EAC3_SPIt', 'pe_EAC4_SCI', 'pe_EAC4_SCIt', 'pe_EAC5_CI', 'pe_EAC5_CIt', 'pe_EAC_GM1', 'pe_EAC_GM2', 'pe_EAC_GM3']
+        var pe_eacs = ['pe_EAC1', 'pe_EAC2', 'pe_EAC3_SPI', 'pe_EAC3_SPIt', 'pe_EAC4_SCI', 'pe_EAC4_SCIt', 'pe_EAC5_CI', 'pe_EAC5_CIt', 'pe_EAC_GM1', 'pe_EAC_GM2', 'pe_EAC_GM3', 'pe_EAC_GM4']
         if(selected_project_id == 'all'){
             project_option_fields = $('.mape-project-select-box option[value!="all"]');
             project_ids = []
@@ -223,6 +223,15 @@ $(document).ready(function(){
                             '#F77C00',
                             '#F77C00'
                         ]
+                    },
+                    {
+                        label: 'EAC-GM4',
+                        data: pe_data[`${grow_model}`]['pe_EAC_GM4'],
+                        backgroundColor: [
+                            '#1C0036',
+                            '#1C0036',
+                            '#1C0036'
+                        ]
                     }
                 ]
             };
@@ -305,6 +314,13 @@ $(document).ready(function(){
                         data: pe_data[`${grow_model}`]['pe_EAC_GM3'],
                         backgroundColor: [
                             '#F77C00'
+                        ]
+                    },
+                    {
+                        label: 'EAC-GM4',
+                        data: pe_data[`${grow_model}`]['pe_EAC_GM4'],
+                        backgroundColor: [
+                            '#1C0036'
                         ]
                     }
                 ]

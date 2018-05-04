@@ -222,6 +222,8 @@ class Funcs:
         EAC_GM2 = Funcs.getEACGM(project_status, xdata, evaluation_index, grow_model, parametersEstimated, budget, 1.0/SPIt)
         #caculate EAC GM3 by EAC4_SCIt
         EAC_GM3 = Funcs.getEACGM(project_status, xdata, evaluation_index, grow_model, parametersEstimated, budget, EACtES3/pd)
+        #caculate EAC GM3 by EAC4_1        
+        EAC_GM4 = Funcs.getEACGM(project_status, xdata, evaluation_index, grow_model, parametersEstimated, budget, EACtES1/pd)
         
 
         alpha = round(parametersEstimated[0], 6)
@@ -262,7 +264,8 @@ class Funcs:
             'EAC5_CIt': EAC5_CIt,
             'EAC_GM1': EAC_GM1,
             'EAC_GM2': EAC_GM2,
-            'EAC_GM3': EAC_GM3
+            'EAC_GM3': EAC_GM3,
+            'EAC_GM4': EAC_GM4
         }
         return data
     
@@ -284,6 +287,7 @@ class Funcs:
         data['pe_EAC_GM1'] = round((estimate_data['EAC_GM1'] - project_ac)*100/project_ac, 2)
         data['pe_EAC_GM2'] = round((estimate_data['EAC_GM2'] - project_ac)*100/project_ac, 2)
         data['pe_EAC_GM3'] = round((estimate_data['EAC_GM3'] - project_ac)*100/project_ac, 2)
+        data['pe_EAC_GM4'] = round((estimate_data['EAC_GM4'] - project_ac)*100/project_ac, 2)
         return data
     
     def get_mape(project_ids, grow_model, evaluation_percent):
@@ -293,7 +297,7 @@ class Funcs:
         for project in projects:
             evaluation_point = math.ceil(project.pd*evaluation_percent)
             data_pe['{}'.format(project.id)] = Funcs.get_pe(project.id, grow_model, evaluation_point)
-        sum_pe = [0,0,0,0,0,0,0,0,0,0,0]
+        sum_pe = [0,0,0,0,0,0,0,0,0,0,0,0]
         for project_id in project_ids:
             sum_pe[0] += abs(data_pe['{}'.format(project_id)]['pe_EAC1'])
             sum_pe[1] += abs(data_pe['{}'.format(project_id)]['pe_EAC2'])
@@ -306,6 +310,7 @@ class Funcs:
             sum_pe[8] += abs(data_pe['{}'.format(project_id)]['pe_EAC_GM1'])
             sum_pe[9] += abs(data_pe['{}'.format(project_id)]['pe_EAC_GM2'])
             sum_pe[10] += abs(data_pe['{}'.format(project_id)]['pe_EAC_GM3'])
+            sum_pe[11] += abs(data_pe['{}'.format(project_id)]['pe_EAC_GM4'])
         return {
             'mape_EAC1': round(sum_pe[0]/len(project_ids), 2),
             'mape_EAC2': round(sum_pe[1]/len(project_ids), 2),
@@ -317,7 +322,8 @@ class Funcs:
             'mape_EAC5_CIt': round(sum_pe[7]/len(project_ids), 2),
             'mape_EAC_GM1': round(sum_pe[8]/len(project_ids), 2),
             'mape_EAC_GM2': round(sum_pe[9]/len(project_ids), 2),
-            'mape_EAC_GM3': round(sum_pe[10]/len(project_ids), 2)
+            'mape_EAC_GM3': round(sum_pe[10]/len(project_ids), 2),
+            'mape_EAC_GM4': round(sum_pe[11]/len(project_ids), 2)
         }
 
 class MyIO:

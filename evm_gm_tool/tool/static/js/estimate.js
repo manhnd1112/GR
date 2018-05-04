@@ -206,6 +206,7 @@ $(document).ready(function(){
                     $('#EAC-GM1').text(res.data.EAC_GM1)                                                                        
                     $('#EAC-GM2').text(res.data.EAC_GM2)
                     $('#EAC-GM3').text(res.data.EAC_GM3)
+                    $('#EAC-GM4').text(res.data.EAC_GM4)
                 } else {
                     alert(res.err)
                 }
