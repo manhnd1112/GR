@@ -14,7 +14,7 @@ import os, re
 from .env import *
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+    
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
 
@@ -133,6 +133,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+print("{}             fdafadf".format(STATIC_ROOT))
 # LOGIN_URL = '/tool/login/'
 LOGOUT_URL = re.compile(r'^/logout$')
 LOGIN_REDIRECT_URL = '/'
@@ -146,10 +147,10 @@ ADMIN_URL = re.compile(r'^admin')
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 MEDIA_URL = 'media/'
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
+print(os.path.join(BASE_DIR, 'static/'))
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/')
 
 SERVER_IP = ENV_SERVER_IP
 SERVER_PORT = ENV_SERVER_PORT
 
-PAGE_LIMIT = 5
+PAGE_LIMIT = ENV_PAGE_LIMIT

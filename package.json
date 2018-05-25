@@ -1,9 +1,14 @@
 {
   "name": "Django",
   "private": true,
+  "config": {
+    "publicip": "127.0.0.1",
+    "port": "8000" 
+  },
   "scripts": {
     "pretest": "eslint django/ js_tests/admin/ js_tests/gis/",
-    "test": "grunt test --verbose"
+    "test": "grunt test --verbose",
+    "start": "python evm_gm_tool/manage.py runserver $npm_package_config_publicip:$npm_package_config_port"
   },
   "engines": {
     "npm": ">=1.3.0 <3.0.0"

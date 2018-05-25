@@ -166,7 +166,7 @@ class ProjectEditForm(forms.ModelForm):
             'class': 'form-control',
             'step': 'any'
         }
-    ), label="Project Duration")
+    ), label="Planned Duration")
 
 
     class Meta:

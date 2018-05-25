@@ -51,7 +51,7 @@
         <div class="inputs row">
             <div class="col-md-12">
                 <div class="col-md-3">
-                    <label for="pd">Project Duration</label>     
+                    <label for="pd">Planned Duration</label>     
                 </div>
                 <div class="col-md-9">
                     <input type="number" id="pd">                        
@@ -94,7 +94,7 @@
             <br>
             <div class="col-md-12">
                     <div class="col-md-3">
-                        <label for="gm">Estimate Algorithm (Least square)</label>     
+                        <label for="gm">Algorithm to perform minimization</label>     
                     </div>
                     <div class="col-md-9">
                         <input type="radio" name="algorithm" value="trf" checked="checked"> Trust Region Reflective
@@ -106,37 +106,37 @@
             <div class="col-md-12">
                 <div class="col-md-3"></div>
                 <div class="col-md-9">
-                    <button class="btn btn-primary" id="btn-est-param">Parameters Estimate</button>                    
+                    <button class="btn btn-primary" id="btn-est-param">Estimate</button>                    
                 </div>
             </div>
             <br>
             <br>
             <div class="col-md-12">
                 <div class="col-md-6">
-                    <h4><b>Estimated parameters</b></h4>    
+                    <h4><b>Estimated GM's Parameters</b></h4>    
                 </div>
             </div>
             <div class="col-md-12">
                 <div class="col-md-3">
-                    <label for="alpha">Alpha</label>
+                    <label for="alpha">Alpha(α)</label>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" id="alpha">
+                    <input type="text" id="alpha" disabled>
                 </div>
                 <div class="col-md-3">
-                    <label for="beta">Beta</label>
+                    <label for="beta">Beta(β) or Delta(δ)</label>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" id="beta">
+                    <input type="text" id="beta" disabled>
                 </div>
             </div>          
             &nbsp;
             <div class="col-md-12">
                 <div class="col-md-3">
-                    <label for="gamma">Gamma</label>
+                    <label for="gamma">Gamma(γ)</label>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" id="gamma">
+                    <input type="text" id="gamma" disabled>
                 </div>
             </div>
             <br>

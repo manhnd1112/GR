@@ -1,5 +1,5 @@
 {% extends 'tool/project/base.html' %}
-{% block title %}Add project{% endblock %}
+{% block title %}Project Edit{% endblock %}
 
 {% block content %}
     <section class="content-header">
@@ -31,8 +31,8 @@
 
         <input type="file" class="file-input-data" accept=".xls, .xlsx, .csv, text/csv">
         <div class="project-status-actions" id="project-status-actions">
-                <a class="btn btn-primary btn-add-project-status">Add project status</a>                
-                <a class="btn btn-warning btn-import-project-status-from-csv">Import project status from file csv</a>
+                <a class="btn btn-primary btn-add-project-status">Add project state</a>                
+                <a class="btn btn-warning btn-import-project-status-from-csv">Import project state from file csv</a>
         </div>
         <br>
         <div class="project-status">
@@ -74,7 +74,7 @@
                
                 <div class="box-body">
                   <div id="world-map" style="width: 100%;">
-                    {% if request.user|has_all_permission:project %}
+                    {% if request.user|has_permission_ge_admin:project %}
                     <div class="add-project-member-area">
                         <input type="text" class="search-member form-control" selected-user-id="" selected-user-avatar-url="">
                         <select name="" id="" class="select-box-group-access form-control">

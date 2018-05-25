@@ -38,4 +38,8 @@ urlpatterns = [
     path("ajax/update_group_access", views.AjaxController.update_group_access, name="ajax_update_group_access"),
     path("ajax/remove_member", views.AjaxController.remove_project_member, name="ajax_remove_member"),
     path("ajax/get_project_detail", views.AjaxController.get_project_detail, name="ajax_get_project_detail"),    
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] 
+# if settings.DEBUG is True:
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# else:
+#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

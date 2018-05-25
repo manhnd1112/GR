@@ -47,24 +47,6 @@ class Project(models.Model):
         return 0
 
     def get_projects_has_access(user_id, search_term=''):
-
-        # user = get_or_none(User, pk = user_id)
-        # if user is None:
-        #     return None
-        # projects = []
-        # if user.is_superuser:
-        #     for project in Project.objects.all():
-        #         projects.append(project)
-        #     return projects
-        # projects_as_onwer = Project.objects.filter(owner=user)
-        # project_members = ProjectMember.objects.filter(user=user)
-        # for project in projects_as_onwer:
-        #     projects.append(project)
-        
-        # for project_member in project_members:
-        #     projects.append(project_member.project)
-        # return projects
-
         user = get_or_none(User, pk = user_id)
         if user is None:
             return None
