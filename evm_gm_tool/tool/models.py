@@ -14,7 +14,7 @@ from functools import reduce
 class UserProfile(models.Model):
     # members = models.ManyToManyField(Person, through='Membership')
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    avatar = models.ImageField(upload_to="profile_image", blank=True)
+    avatar = models.ImageField(upload_to="media/profile_image", blank=True)
     role = models.CharField(max_length=255, default='', blank=True)
     desc = models.TextField(default='', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -210,12 +210,13 @@ class GroupAccess(IntEnum):
     SUPERUSER = 4
 
 class Utils:
-    SERVER_BASE_URL = 'http://{}:{}/'.format(settings.SERVER_IP, settings.SERVER_PORT)
+    # SERVER_BASE_URL = 'http://{}:{}/'.format(settings.SERVER_IP, settings.SERVER_PORT)
     def get_avatar_url(user):
         if not hasattr(user, 'userprofile'):
             UserProfile.objects.create(user=user)
         if user.userprofile.avatar and hasattr(user.userprofile.avatar, 'url'):
-            return  '{}{}'.format(Utils.SERVER_BASE_URL, user.userprofile.avatar.url)
+            return static(user.userprofile.avatar.url)
+            # return  '{}{}'.format(Utils.SERVER_BASE_URL, user.userprofile.avatar.url)
         else:
             return static('assets/avatar_default.png')
 
@@ -227,7 +228,8 @@ class Utils:
         if not hasattr(user, 'userprofile'):
             UserProfile.objects.create(user=user)
         if user.userprofile.avatar and hasattr(user.userprofile.avatar, 'url'):
-            return  '{}{}'.format(Utils.SERVER_BASE_URL, user.userprofile.avatar.url)
+            return static(user.userprofile.avatar.url)
+            # return  '{}{}'.format(Utils.SERVER_BASE_URL, user.userprofile.avatar.url)
         else:
             return static('assets/avatar_default.png')
 
