@@ -132,8 +132,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-print("{}             fdafadf".format(STATIC_ROOT))
+STATIC_ROOT = os.path.join(BASE_DIR, 'tool/static')
 # LOGIN_URL = '/tool/login/'
 LOGOUT_URL = re.compile(r'^/logout$')
 LOGIN_REDIRECT_URL = '/'
@@ -146,9 +145,8 @@ ADMIN_URL = re.compile(r'^admin')
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
-MEDIA_URL = 'media/'
-print(os.path.join(BASE_DIR, 'static/'))
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static/')
+# MEDIA_URL = '/static/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'tool/static/')
 
 SERVER_IP = ENV_SERVER_IP
 SERVER_PORT = ENV_SERVER_PORT
