@@ -218,7 +218,7 @@ $ python manage.py runserver <internal_private_ip>:<port> --insecure
 # python manage.py runserver 10.xxx.0.x:8000 --insecure
 ```
 Now, you can access to EVM-GM Tool.
-## Request A Demo
+## 9. Request A Demo
 You can see my EVM-GM Tool demo by access here:
 ```
 http://35.234.47.119:8000/
@@ -230,22 +230,22 @@ Then, login with following account info:
 
 ## Some screenshots of the EVM-GM Tool
 #### Main Dashboard
-![Main Dashboad](https://lh5.googleusercontent.com/227SL3YBkd36G3_WLLkF3ux36IlC8E981P2-5YwEcidO5h-5b7Ov4oGziLiiidRQ4kJ4NW8PHKvK1Y14xeZg=w1366-h675-rw?raw=true)
+![Main Dashboad](https://drive.google.com/uc?id=1s98isCZSTQqSPih0uZGnWbYOCfOiXh6j)
 
 #### Project Dashboard
-![Project dashboard](https://lh3.google.com/u/0/d/1aFVVnSe8lsQ_-nE5JrdXzJ2CoAFJaO9T=w1366-h675-iv1)
+![Project dashboard](https://drive.google.com/uc?id=1aFVVnSe8lsQ_-nE5JrdXzJ2CoAFJaO9T)
 
 #### Project Edit
-![Project Edit](https://lh3.google.com/u/0/d/1_AvRqPvyR-Gr5aizBEwJD0Ax-_6zZSeU=w1366-h675-iv1)
+![Project Edit](https://drive.google.com/uc?id=1_AvRqPvyR-Gr5aizBEwJD0Ax-_6zZSeU)
 
 #### User Dashboard
-![User dashboard](https://lh3.google.com/u/0/d/1lFn_DyLz9-DXuL5iFSxfPZqLnrgYLNAx=w1366-h675-iv1)
+![User dashboard](https://drive.google.com/uc?id=1lFn_DyLz9-DXuL5iFSxfPZqLnrgYLNAx)
 
 #### Estimate At Complate
-![Estimate](https://lh3.google.com/u/0/d/1ptqYB8YNOKBB0VKF4ZUh0v9TZfICdLvZ=w1366-h675-iv1)
+![Estimate](https://drive.google.com/uc?id=1ptqYB8YNOKBB0VKF4ZUh0v9TZfICdLvZ)
 
 #### PE, MAPE
-![mape](https://lh3.google.com/u/0/d/1oN3ec1fWczcvhzQYsqhk6Nhlt1IECm6h=w1366-h675-iv1)
+![mape](https://drive.google.com/uc?id=1oN3ec1fWczcvhzQYsqhk6Nhlt1IECm6h)
 
 ## Some info about author
 
