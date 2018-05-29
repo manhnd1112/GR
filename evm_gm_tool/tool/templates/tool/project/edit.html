@@ -18,7 +18,10 @@
     <form action="" method="POST" class="form project-update-form">
         {% csrf_token %}
         {% for field in form %}
-            {% if field.name != 'status' and field.name != 'id'  %}
+            {% if field.name == 'owner' and request.user|has_permission_change_owner:project %}
+                {{ field.label_tag }} {{ field }}
+            {% elif field.name == 'owner' and request.user|has_permission_change_owner:project == False %}
+            {% elif field.name != 'status' and field.name != 'id'  %}
                 {{ field.label_tag }} {{ field }}
                 <br><br>
             {% else %}

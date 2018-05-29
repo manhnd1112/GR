@@ -22,6 +22,8 @@ evm_gm_tool/static/
 evm_gm_tool/evm_gm_tool/env.py
 evm_gm_tool/access.log
 evm_gm_tool/error.log
+evm_gm_tool/nohup.out
+evm_gm_tool/media/
 error.log
 access.log
 os
