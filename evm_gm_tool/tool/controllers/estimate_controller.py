@@ -151,6 +151,10 @@ class Funcs:
 
     def optimizeLeastSquares(growModel, xdata, ydata, method = 'trf'):
         x0 = [0.1, 0.2, 0.3] 
+        # max_nfev = 2000 # maxium of function evaluations
+        # bounds = [(0,0,0), (2,2,2)] # lower adn upper bounds on independent variables.
+        # ftol = 1e-8 # default tolerance of termination by the change of cost function. dF < ftol*F
+
         if(growModel == 'gompertz'):
             OptimizeResult  = optimize.least_squares(Funcs.residuals,  x0,method = method,
                                           args   = ( xdata, ydata,Funcs.gomperzt_func) )
@@ -368,7 +372,7 @@ class PeController:
         project_ids_str = request.GET.get('project_ids')
         project_ids = json.loads(project_ids_str)
         evaluation_percents = [0.25, 0.5, 0.75]
-        grow_models = ['gompertz', 'logistic', 'weibull', 'bass']
+        grow_models = ['gompertz', 'logistic', 'bass', 'weibull']
         # grow_models = ['gompertz', 'logistic', 'weibull', 'bass', 'log_logistic']
         data = {}
         for grow_model in grow_models:    
