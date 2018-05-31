@@ -57,6 +57,7 @@ class UserController:
             args = {'form': form}    
             if form.is_valid():
                 new_user = form.save()
+                messages.success(request, 'User created successfully')
                 return redirect(reverse('tool:user_edit', args=(new_user.id,)))
             else:
                 args['errors'] = form.errors
@@ -75,7 +76,8 @@ class UserController:
         if request.method == "POST":
             form = UserEditForm(request.POST, instance=user_edit)                
             if form.is_valid():
-                user_edit = form.save()                  
+                user_edit = form.save() 
+                messages.success(request, 'User updated successfully')                 
                 return redirect(reverse('tool:user_edit', args=(user_edit.id,)))
             else:
                 args = {'errors': form.errors, 'form': form}
@@ -93,5 +95,5 @@ class UserController:
         if user_remove is None:
             return redirect('tool:page_not_found')
         user_remove.delete()
-        messages.success(request, 'User deleted successfully.')
+        messages.success(request, 'User deleted successfully')
         return redirect('tool:user_index')

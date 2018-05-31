@@ -13,7 +13,6 @@ from django.contrib import messages
 class AjaxController:  
     def search_user(request):
         keyword = request.GET.get('keyword')
-        print(keyword)
         # users = User.objects.filter(username__regex=r'^.*{}.*$'.format(keyword))
         users = User.objects.filter(username__icontains = keyword)
         # users_list = list(users.values_list('id', 'username'))
@@ -25,9 +24,6 @@ class AjaxController:
             user['username'] = user_tuple[1]
             user['avatar-url'] = Utils.get_avatar_url_by_user_id(user_tuple[0])
             user_list.append(user)
-            print(user)    
-        print(user_list)
-        # print(user_tuple_list)
         return JsonResponse({'users': user_list})
 
     def add_project_memger(request):
