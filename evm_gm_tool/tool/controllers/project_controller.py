@@ -48,10 +48,10 @@ class ProjectController:
             if form.is_valid():
                 new_project = form.save()
                 members_data = request.POST.get('members')
-                print(members_data)
                 if(members_data != '' and members_data is not None):
                     members = json.loads(members_data)
-                    ProjectMember.add_member_list(new_project, request.user, members) 
+                    ProjectMember.add_member_list(new_project, request.user, members)
+                messages.success(request, 'New project created successfully')
                 return redirect(reverse('tool:project_edit', args=(new_project.id,)))
             else:
                 args['errors'] = form.errors
@@ -89,7 +89,8 @@ class ProjectController:
                 #     member_list = json.loads(request.POST.get('members'))
                 #     ProjectMember.update_project_member(project, request.user.id, member_list)                             
                 members = ProjectMember.get_member_list(project)
-                args['members'] = members                    
+                args['members'] = members
+                messages.success(request, 'Project updated successfully')                                    
                 return render(request, 'tool/project/edit.html', args)
             else:
                 args['errors'] = form.errors
@@ -109,7 +110,7 @@ class ProjectController:
         if project_remove is None:
             return redirect('tool:page_not_found')
         project_remove.delete()
-        messages.success(request, 'Project deleted successfully.')
+        messages.success(request, 'Project deleted successfully')
         return redirect('tool:project_index')
 
             
